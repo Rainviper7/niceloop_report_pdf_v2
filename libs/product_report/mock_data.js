@@ -4079,7 +4079,68 @@ exports.data = {
                 Row: 89
             }
         ],
-        DeletedMenu: [],
+        DeletedMenu: [             
+            {
+            Toppings: [
+                {
+                    Row: 0,
+                    Price: 234,
+                    GroupId: 1,
+                    IsDeleted: false,
+                    Amount: 0,
+                    Quantity: 0,
+                    Percent: 0,
+                    Name: "abcdef",
+                    CustomerId: 3,
+                    Id: 1
+                },
+                {
+                    Row: 0,
+                    Price: 30,
+                    GroupId: 1,
+                    IsDeleted: false,
+                    Amount: 0,
+                    Quantity: 0,
+                    Percent: 0,
+                    Name: "ชื่อยาวๆๆๆๆๆ",
+                    CustomerId: 3,
+                    Id: 2
+                },
+                {
+                    Row: 0,
+                    Price: 5,
+                    GroupId: 1,
+                    IsDeleted: false,
+                    Amount: 0,
+                    Quantity: 0,
+                    Percent: 0,
+                    Name: "ชื่อสั้น",
+                    CustomerId: 3,
+                    Id: 3
+                },
+                {
+                    Row: 0,
+                    Price: 0,
+                    GroupId: 1,
+                    IsDeleted: false,
+                    Amount: 0,
+                    Quantity: 0,
+                    Percent: 0,
+                    Name: "xqwertyuiopp",
+                    CustomerId: 3,
+                    Id: 4
+                }
+            ],
+            Row: 0,
+            IsDeleted: false,
+            Amount: 0,
+            Quantity: 0,
+            Percent: 0,
+            Name: "topping",
+            CustomerId: 3,
+            Id: 1
+        }
+    ],
         ToppingGroups: [
             {
                 Toppings: [

@@ -29,13 +29,26 @@ var COLUMN = {
 
 //----------table_layout
 var TAB = {
-    TABLE: {
+    ITEM: {
         INDEX: 50,
         NAME: 70,
-        QUANTITY: 320,
+        QUANTITY: 330,
         AMOUNT: 380,
-        PERCENT: 490,
-        LAST: 540
+        PERCENT: 470,
+        LAST: 520
+    },
+    TOPPING: {
+        INDEX: 50,
+        NAME: 70,
+        QUANTITY: 330,
+        LAST: 380
+    },
+    EXPENSE: {
+        INDEX: 50,
+        NAME: 70,
+        AMOUNT: 380,
+        PERCENT: 470,
+        LAST: 520
     },
     CHART: {
         INDEX: 60,
@@ -52,12 +65,25 @@ var TAB = {
         LAST: 740
     }
 }
-var TABLE_GROUP_ITEM = {
-        INDEX: TAB.TABLE.INDEX,
-        QUANTITY: TAB.TABLE.QUANTITY,
-        AMOUNT: TAB.TABLE.AMOUNT,
-        PERCENT: TAB.TABLE.PERCENT,
-        LAST: TAB.TABLE.LAST
+var TAB_TABLE_GROUP = {
+    ITEM: {
+        INDEX: TAB.ITEM.INDEX,
+        QUANTITY: TAB.ITEM.QUANTITY,
+        AMOUNT: TAB.ITEM.AMOUNT,
+        PERCENT: TAB.ITEM.PERCENT,
+        LAST: TAB.ITEM.LAST
+    },
+    TOPPING: {
+        INDEX: TAB.TOPPING.INDEX,
+        QUANTITY: TAB.TOPPING.QUANTITY,
+        LAST: TAB.TOPPING.LAST
+    },
+    EXPENSE: {
+        INDEX: TAB.EXPENSE.INDEX,
+        AMOUNT: TAB.EXPENSE.AMOUNT,
+        PERCENT: TAB.EXPENSE.PERCENT,
+        LAST: TAB.EXPENSE.LAST
+    }
 }
 var TEXT_PADDING = {
     LEFT: 5,
@@ -85,7 +111,7 @@ var STYLES_FONT = {
         align: 'left'
     },
     HEADER: {
-        width: TAB.TABLE.LAST - TAB.TABLE.INDEX,
+        width: TAB.ITEM.LAST - TAB.ITEM.INDEX,
         align: 'left'
     },
     CHART: {
@@ -102,13 +128,13 @@ var STYLES_FONT = {
         width: TAB.CHART_2.LAST - TAB.CHART_2.INDEX,
         align: 'left'
     },
-    AMOUNT:{
-        widht:TAB.TABLE.PERCENT-TAB.TABLE.AMOUNT,
-        align:'left'
+    AMOUNT: {
+        width: TAB.ITEM.PERCENT - TAB.ITEM.AMOUNT,
+        align: 'left'
     },
-    PERCENT:{
-        widht:TAB.TABLE.LAST-TAB.TABLE.PERCENT,
-        align:'rigth'
+    PERCENT: {
+        width: (TAB.ITEM.LAST - TAB.ITEM.PERCENT) + TEXT_PADDING.RIGHT,
+        align: 'right'
     },
 
     HILIGHT: {
@@ -162,6 +188,6 @@ exports.COLUMN = COLUMN
 exports.TAB = TAB
 exports.STYLES_FONT = STYLES_FONT
 // exports.STYLES_BORDER = STYLES_BORDER
-exports.TABLE_GROUP_ITEM=TABLE_GROUP_ITEM
+exports.TAB_TABLE_GROUP = TAB_TABLE_GROUP
 exports.PAGE_TYPE = PAGE_TYPE
 exports.TEXT_PADDING = TEXT_PADDING

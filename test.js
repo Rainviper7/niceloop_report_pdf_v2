@@ -13,11 +13,10 @@ var mockdata = require('./libs/product_report/mock_data').data,
     productPdf = require('./libs/product_report/index')
     ;
 //--------product--------
-var filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf'
-    ;
+
 var params = {},
     prefix_name = "product",
-    ShopName = "Niceloop Test Lab",
+    ShopName = mockdata.ShopName||"Niceloop Test Lab",
     params_default = {
         filePath: '/tmp/' + filename, //cloud
         data: {},
@@ -26,6 +25,8 @@ var params = {},
         shopname: "" || ShopName,
         customerId: '4073'
     };
+    var filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf'
+    ;
 
 //-----------in dev mode
 params_default.filePath = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf'
