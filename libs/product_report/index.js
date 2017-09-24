@@ -47,7 +47,7 @@ exports.Report = function (options, callback) {
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss"),
-        report_type = "รายงานประจำวันที่ : " + moment(data.From).format("DD/MMMM/YYYY")
+        report_type = "รายงานประจำวันที่ : " + moment(data.From).format("DD/MM/YYYY")
             + " " + moment(data.From).format("HH:mm") + " - " + moment(data.To).format("HH:mm")
         ;
 
@@ -424,7 +424,7 @@ exports.Report = function (options, callback) {
 
                 addExpensesGroups(expgroug);
 
-                _.forEach(C.TAB.TABLE, function (value, key) {
+                _.forEach(C.TAB.TABLE_GROUP_ITEM, function (value, key) {
                     addColumnLine(value)
                 })
 
@@ -543,6 +543,24 @@ exports.Report = function (options, callback) {
         })
 
         //-- addDetailChart();
+        // var DetailChart = {
+        //     font:{
+        //         size:C.FONT.SIZE.NORMAL,
+        //         style:C.STYLES_FONT.CHART_2
+        // },
+        //     data: {
+        //         bills:"",
+        //         avgbill:"",
+        //         shift:"",
+
+        // },
+        //     title: {},
+        //     position_column: {}
+        // }
+
+        //     ;
+        
+            // _.forEach(,function(){});
 
         dailyReport.fontSize(C.FONT.SIZE.NORMAL)
             .text("Bills : " + data.BillCount
@@ -617,7 +635,7 @@ exports.Report = function (options, callback) {
             .text(itemgroup.Name, C.TAB.TABLE.NAME+C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text(itemgroup.Quantity, C.TAB.TABLE.QUANTITY+C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text("฿ " + numberWithCommas(itemgroup.Amount.toFixed(2)), C.TAB.TABLE.AMOUNT+C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text(itemgroup.Percent + "%", C.TAB.TABLE.PERCENT+C.TEXT_PADDING.RIGHT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT);
+            .text(itemgroup.Percent + "%", C.TAB.TABLE.PERCENT , ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT);
         
     }
 
@@ -628,7 +646,7 @@ exports.Report = function (options, callback) {
             .text(item.Name, C.TAB.TABLE.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text(item.Quantity, C.TAB.TABLE.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text("฿ " + numberWithCommas(item.Amount.toFixed(2)), C.TAB.TABLE.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text(item.Percent + "%", C.TAB.TABLE.PERCENT , ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(item.Percent + "%", C.TAB.TABLE.PERCENT , ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT)
             ;
     }
 
@@ -661,7 +679,7 @@ exports.Report = function (options, callback) {
     function addExpensesGroups(Expensesgroup) {
         dailyReport.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
             .text("Amount", C.TAB.TABLE.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("Percent", C.TAB.TABLE.PERCENT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text("Percent", C.TAB.TABLE.PERCENT+C.TEXT_PADDING.LEFT , ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             ;
         dailyReport.font("font_style_normal");
 
@@ -674,7 +692,7 @@ exports.Report = function (options, callback) {
         dailyReport.fontSize(C.FONT.SIZE.NORMAL)
             .text(Expensesgroup.Name, C.TAB.TABLE.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text("฿ " + numberWithCommas(Expensesgroup.Amount.toFixed(2)), C.TAB.TABLE.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text((Expensesgroup.Percent * 100).toFixed(2) + "%", C.TAB.TABLE.PERCENT + C.TEXT_PADDING.RIGHT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text((Expensesgroup.Percent * 100).toFixed(2) + "%", C.TAB.TABLE.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             ;
     }
 
@@ -684,9 +702,12 @@ exports.Report = function (options, callback) {
             .text(key + 1 + ". ", C.TAB.TABLE.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text(item.Name, C.TAB.TABLE.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text("฿ " + numberWithCommas(item.Amount.toFixed(2)), C.TAB.TABLE.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text((item.Percent * 100).toFixed(2) + "%", C.TAB.TABLE.PERCENT + C.TEXT_PADDING.RIGHT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text((item.Percent * 100).toFixed(2) + "%", C.TAB.TABLE.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             ;
 
+    }
+    function addText(data,size,column,row,style){
+        dailyReport.fontSize(size).text(data,column,row,style)
     }
 
     function checkPositionOutsideArea() {

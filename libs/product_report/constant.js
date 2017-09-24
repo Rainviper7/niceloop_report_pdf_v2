@@ -32,10 +32,10 @@ var TAB = {
     TABLE: {
         INDEX: 50,
         NAME: 70,
-        QUANTITY: 370,
-        AMOUNT: 420,
+        QUANTITY: 320,
+        AMOUNT: 380,
         PERCENT: 490,
-        LAST: 560
+        LAST: 540
     },
     CHART: {
         INDEX: 60,
@@ -108,7 +108,7 @@ var STYLES_FONT = {
     },
     PERCENT:{
         widht:TAB.TABLE.LAST-TAB.TABLE.PERCENT,
-        align:'right'
+        align:'rigth'
     },
 
     HILIGHT: {
