@@ -43,6 +43,13 @@ var TAB = {
         QUANTITY: 330,
         LAST: 380
     },
+     DELETED: {
+        INDEX: 50,
+        NAME: 70,
+        QUANTITY: 330,
+        AMOUNT: 380,
+        LAST: 470
+    },
     EXPENSE: {
         INDEX: 50,
         NAME: 70,
@@ -78,6 +85,12 @@ var TAB_TABLE_GROUP = {
         QUANTITY: TAB.TOPPING.QUANTITY,
         LAST: TAB.TOPPING.LAST
     },
+    DELETED: {
+        INDEX: TAB.DELETED.INDEX,
+        QUANTITY: TAB.DELETED.QUANTITY,
+        AMOUNT: TAB.ITEM.AMOUNT,
+        LAST: TAB.DELETED.LAST
+    },
     EXPENSE: {
         INDEX: TAB.EXPENSE.INDEX,
         AMOUNT: TAB.EXPENSE.AMOUNT,
@@ -92,7 +105,7 @@ var TEXT_PADDING = {
 
 //--HEIGHT portrait 790,landscape 520
 var PAGE_TYPE = {
-    HEIGHT: 710,
+    HEIGHT: 700,
     MAGIN: {
         margins: 10,
         top: 10, bottom: 10, left: 50, right: 50
@@ -135,6 +148,10 @@ var STYLES_FONT = {
     PERCENT: {
         width: (TAB.ITEM.LAST - TAB.ITEM.PERCENT) + TEXT_PADDING.RIGHT,
         align: 'right'
+    },
+    DELETED:{
+        align: 'left',
+            strike:"true"
     },
 
     HILIGHT: {
