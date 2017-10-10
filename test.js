@@ -22,18 +22,18 @@ var params = {},
     };
 
 //----main---
-// dailyemailPDF();
-voidPDF();
-// billsPDF();
 // detailbillsPDF();
 // memberPDF();
 // orderrangePDF();
 // productbydaysPDF();
-// productPDF();
 // salebyemployeePDF();
 // salePDF();
+// --------finish-------
+// dailyemailPDF();
+voidPDF();
+// billsPDF();
+// productPDF();
 // stockPDF();
-
 
 
 //-------------------
@@ -270,7 +270,8 @@ function salebyemployeePDF() {
 function salePDF() {
 
     //--------void--------
-    var saleReport = require('./libs/sale_report/index')
+    var saleReport = require('./libs/sale-pdf/index'),
+    mockdata = require("./libs/sale-pdf/mock_data")
         ;
 
     //-----------in dev mode
@@ -282,7 +283,7 @@ function salePDF() {
 
             params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        // params_default.data = mockdata||{};
+        params_default.data = mockdata||{};
         params = _.assign({}, params_default)
 
     }

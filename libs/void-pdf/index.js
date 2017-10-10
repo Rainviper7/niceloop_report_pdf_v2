@@ -62,7 +62,7 @@ exports.Report = function (options, callback) {
         };
 
     //----set font
-    var fontpath = path.join(__dirname, 'fonts', 'ARIALUNI.ttf'),
+    var fontpath = path.join(__dirname, 'fonts', 'droidsansth.ttf'),
         fontpath_bold = path.join(__dirname, 'fonts', 'arialbd.ttf'),
         fontpath_bold_bath = path.join(__dirname, 'fonts', 'cambriab.ttf')
         ;
