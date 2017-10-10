@@ -23,7 +23,7 @@ var params = {},
 
 //----main---
 // dailyemailPDF();
-// voidPDF();
+voidPDF();
 // billsPDF();
 // detailbillsPDF();
 // memberPDF();
@@ -32,7 +32,7 @@ var params = {},
 // productPDF();
 // salebyemployeePDF();
 // salePDF();
-stockPDF();
+// stockPDF();
 
 
 
@@ -65,7 +65,8 @@ function dailyemailPDF() {
 function voidPDF() {
 
     //--------void--------
-    var voidReport = require('./libs/void_report/index')
+    var voidReport = require('./libs/void-pdf/index'),
+     mockdata = require('./libs/void-pdf/mock_data').data
         ;
 
     //-----------in dev mode
@@ -75,9 +76,9 @@ function voidPDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        // params_default.data = mockdata||{};
+        params_default.data = mockdata||{};
         params = _.assign({}, params_default)
 
     }

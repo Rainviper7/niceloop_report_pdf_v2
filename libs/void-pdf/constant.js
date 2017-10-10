@@ -1,6 +1,6 @@
 
 var FONT = {
-    NAME: 'Arial',
+    NAME: '',
     SIZE: {
         HEADER: 14,
         BIG: 11,
@@ -28,40 +28,18 @@ var COLUMN = {
 }
 
 //----------table_layout
+
 var TAB = {
     ITEM: {
         INDEX: 50,
-        TIME: 80,
-        REFER:160,
-        USER:200,
-        QUANTITY: 270,
-        ITEM:300,
-        AMOUNT: 420,
-        REASON: 470,
+        TIME:80,
+        REFER:155,
+        USER:190,
+        QUANTITY:250,
+        ITEM:280,
+        AMOUNT:400,
+        COMMENT:460,
         LAST: 550
-    },
-    TOPPING: {
-        INDEX: 50,
-        NAME: 70,
-        QUANTITY: 330,
-        LAST: 380
-    },
-    EXPENSE: {
-        INDEX: 50,
-        NAME: 70,
-        AMOUNT: 380,
-        PERCENT: 470,
-        LAST: 520
-    },
-    CHART: {
-        INDEX: 60,
-        NAME: 75,
-        AMOUNT: 185,
-        LAST: 280
-    },
-    CHART_2: {
-        INDEX: 350,
-        LAST: 500
     },
     TABLE_LANDSCAPE: {
         INDEX: 50,
@@ -71,22 +49,15 @@ var TAB = {
 var TAB_TABLE_GROUP = {
     ITEM: {
         INDEX: TAB.ITEM.INDEX,
+        TIME: TAB.ITEM.TIME,
+        REFER: TAB.ITEM.REFER,
+        USER: TAB.ITEM.USER,
         QUANTITY: TAB.ITEM.QUANTITY,
+        ITEM: TAB.ITEM.ITEM,
         AMOUNT: TAB.ITEM.AMOUNT,
-        PERCENT: TAB.ITEM.PERCENT,
-        LAST: TAB.ITEM.LAST
+        COMMENT:TAB.ITEM.COMMENT,
+        LAST:TAB.ITEM.LAST
     },
-    TOPPING: {
-        INDEX: TAB.TOPPING.INDEX,
-        QUANTITY: TAB.TOPPING.QUANTITY,
-        LAST: TAB.TOPPING.LAST
-    },
-    EXPENSE: {
-        INDEX: TAB.EXPENSE.INDEX,
-        AMOUNT: TAB.EXPENSE.AMOUNT,
-        PERCENT: TAB.EXPENSE.PERCENT,
-        LAST: TAB.EXPENSE.LAST
-    }
 }
 var TEXT_PADDING = {
     LEFT: 5,
@@ -95,7 +66,7 @@ var TEXT_PADDING = {
 
 //--HEIGHT portrait 790,landscape 520
 var PAGE_TYPE = {
-    HEIGHT: 710,
+    HEIGHT: 690,
     MAGIN: {
         margins: 10,
         top: 10, bottom: 10, left: 50, right: 50
@@ -113,33 +84,23 @@ var STYLES_FONT = {
     NORMAL: {
         align: 'left'
     },
+    ITEM:{
+        width:TAB.ITEM.AMOUNT-TAB.ITEM.ITEM+TEXT_PADDING.RIGHT,
+        align: 'left'
+    },
+    AMOUNT:{
+        width:TAB.ITEM.COMMENT-TAB.ITEM.AMOUNT,
+        align: 'right'
+    },
+    COMMENT:{
+        width:TAB.ITEM.LAST-TAB.ITEM.COMMENT+TEXT_PADDING.RIGHT,
+        align: 'left'
+    },
+
     HEADER: {
         width: TAB.ITEM.LAST - TAB.ITEM.INDEX,
         align: 'left'
     },
-    CHART: {
-        TITLE: {
-            width: TAB.CHART.AMOUNT - TAB.CHART.INDEX,
-            align: 'left'
-        },
-        AMOUNT: {
-            width: TAB.CHART.LAST - 15 - TAB.CHART.AMOUNT,
-            align: 'right'
-        }
-    },
-    CHART_2: {
-        width: TAB.CHART_2.LAST - TAB.CHART_2.INDEX,
-        align: 'left'
-    },
-    AMOUNT: {
-        width: TAB.ITEM.PERCENT - TAB.ITEM.AMOUNT,
-        align: 'left'
-    },
-    PERCENT: {
-        width: (TAB.ITEM.LAST - TAB.ITEM.PERCENT) + TEXT_PADDING.RIGHT,
-        align: 'right'
-    },
-
     HILIGHT: {
 
     },
