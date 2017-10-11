@@ -33,15 +33,42 @@ exports.Report = function (options, callback) {
         shopname = options.shopname
         ;
 
-    var pdfReport = new pdf();
+    var pdfReport = new pdf({ autoFirstPage: false });
+
+    pdfReport.addPage(C.PAGE_TYPE.LANDSCAPE)
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss"),
         report_type = "รายงานการขาย"
         ;
+    var date_search = moment(options.from).format("DD/MM/YYYY") + " - " + moment(options.to).format("DD/MM/YYYY")
+        ;
+    var title_group = {
+        date: "Date",
+        bills: "Bills (Avg.)",
+        total: "GrandTotal",
+        paytype:"Payment Type",
+        subtotal: "SubTotal",
+        itemdiscount: "ItemDistcount",
+        service: "Service ch.",
+        discount: "Discount",
+        vat: "Vat"
+    },
+
+        position_tab = {
+            date: C.TAB_TABLE_GROUP.ITEM.INDEX,
+            bills: C.TAB_TABLE_GROUP.ITEM.BILLS,
+            total: C.TAB_TABLE_GROUP.ITEM.TOTAL,
+            paytype:C.TAB_TABLE_GROUP.ITEM.PAYMENTTYPE,
+            subtotal: C.TAB_TABLE_GROUP.ITEM.SUBTOTAL,
+            itemdiscount: C.TAB_TABLE_GROUP.ITEM.ITEMDISCOUNT,
+            service: C.TAB_TABLE_GROUP.ITEM.SERVICE,
+            discount: C.TAB_TABLE_GROUP.ITEM.DISCOUNT,
+            vat: C.TAB.ITEM.VAT
+        };
 
     //----set font
-    var fontpath = path.join(__dirname, 'fonts', 'ARIALUNI.ttf'),
+    var fontpath = path.join(__dirname, 'fonts', 'droidsansth.ttf'),
         fontpath_bold = path.join(__dirname, 'fonts', 'arialbd.ttf'),
         fontpath_bold_bath = path.join(__dirname, 'fonts', 'cambriab.ttf')
         ;
@@ -85,9 +112,11 @@ exports.Report = function (options, callback) {
 
     function drawHeader() {
 
+  
         var header_data = {
             shopname: shopname,
-            report_type: report_type
+            report_type: report_type,
+            date: date_search
         }
             ;
 
@@ -96,7 +125,7 @@ exports.Report = function (options, callback) {
                 .text(value, C.TAB.ITEM.INDEX, ROW_CURRENT, C.STYLES_FONT.HEADER);
             NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE_LOWER);
         })
-
+  
         NewLine(TEXT_SPACE_SMALL);
 
         addGennerateDate()
@@ -107,47 +136,37 @@ exports.Report = function (options, callback) {
     }
 
     function drawBody() {
-        var title_group = {
-            index: "No.",
-            time: "Time",
-            refer: "Refer",
-            user: "ApproveBy",
-            quantity: "Qty",
-            item: "Items",
-            amount: "Price",
-            reson: "Reason"
-        },
-        position_tab={
-            index: C.TAB.ITEM.INDEX,
-            time: C.TAB.ITEM.TIME,
-            refer: C.TAB.ITEM.REFER,
-            user: C.TAB.ITEM.USER,
-            quantity: C.TAB.ITEM.QUANTITY,
-            item: C.TAB.ITEM.ITEM,
-            amount: C.TAB.ITEM.AMOUNT,
-            reson: C.TAB.ITEM.REASON
-        };
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
-                    .LAST, ROW_CURRENT); //--row line
 
-            _.forEach(title_group,function(title,tab){
-                pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-                            .text(title,position_tab[tab]+C.TEXT_PADDING.LEFT,ROW_CURRENT+TEXT_SPACE_UPPER,C.STYLES_FONT.NORMAL);
+        addTableLine(C.TAB.ITEM
+            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                .LAST, ROW_CURRENT); //--row line
+
+        addItemGroup(title_group)
+
+        _.forEach(C.TAB.ITEM, function (value, key) {
+            addColumnLine(value);
+        });
+
+        NewLine(TEXT_SPACE)
+        
+        addTableLine(C.TAB.ITEM
+            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                .LAST, ROW_CURRENT); //--row line
+
+        _.forEach(data, function (record, index) {
+            _.forEach(record, function (detail, index2) {
+                addItems(detail, index2)
+
+
+
             })
-            
-            _.forEach(C.TAB.ITEM, function (value, key) {
-                addColumnLine(value);
-            });
+        })
 
-            NewLine(TEXT_SPACE)
+        addTableLine(C.TAB.ITEM
+            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                .LAST, ROW_CURRENT); //--row line
 
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
-                    .LAST, ROW_CURRENT); //--row line
-
-            NewLine(TEXT_SPACE)
-            NewLine(TEXT_SPACE)
+        NewLine(TEXT_SPACE)
     }
 
     function drawFooter() {
@@ -174,43 +193,124 @@ exports.Report = function (options, callback) {
     }
 
     function addItemGroup(itemgroup) {
-        pdfReport.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
-            .text("Qty", C.TAB_TABLE_GROUP.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("Total", C.TAB_TABLE_GROUP.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("Percent", C.TAB_TABLE_GROUP.ITEM.PERCENT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
-        pdfReport.font("font_style_normal");
-        NewLine(TEXT_SPACE);
-
-        _.forEach(C.TAB_TABLE_GROUP.ITEM, function (value, key) {
-            addColumnLine(value);
-        });
-
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text(itemgroup.Name, C.TAB_TABLE_GROUP.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(itemgroup.Quantity, C.TAB_TABLE_GROUP.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(itemgroup.Amount.toFixed(2)), C.TAB_TABLE_GROUP.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text(itemgroup.Percent + "%", C.TAB_TABLE_GROUP.ITEM.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT);
-
+        pdfReport.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL)
+        _.forEach(itemgroup, function (title, tab) {
+            pdfReport.fontSize(C.FONT.SIZE.NORMAL)
+                .text(title, position_tab[tab] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
+        })
+        pdfReport.font('font_style_normal')
     }
 
-    function addItems(item, key) {
 
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text(key + 1 + ". ", C.TAB.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Name, C.TAB.ITEM.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Quantity, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(item.Amount.toFixed(2)), C.TAB.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text(item.Percent + "%", C.TAB.ITEM.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT)
-            ;
-    }
+    function addItems(record, index) {
+        if (index == 'all') {
+            var dateLong;
+            var time = moment(options.to).diff(moment(options.from), 'days'),
+                avg = record.GrandTotal / time+1
+                dateLong = "avg. ฿ " + numberWithCommas2(avg.toFixed(2)) + " /day";
 
-    function addSubItems(subitem) {
+        } else {
+            var dateLong = moment(record.Date).format("DD MMMM YYYY ddd");
+        }
 
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text("- " + subitem.Name, C.TAB.ITEM.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(subitem.Quantity, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(subitem.Amount.toFixed(2)), C.TAB.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            ;
+        pdfReport.font('font_style_normal').fontSize(C.FONT.SIZE.SMALL)
+        pdfReport.text(dateLong, C.TABLE_LANDSCAPE.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+
+        if (record.Bills == 0) {
+
+            pdfReport.text(numberWithCommas(record.Bills), C.TABLE_LANDSCAPE.BILLS + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+                .text("-", C.TABLE_LANDSCAPE.TOTAL + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+                .text("-", C.TABLE_LANDSCAPE.PAYMENTTYPE + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+                .text("-", C.TABLE_LANDSCAPE.SUBTOTAL + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+                .text("-", C.TABLE_LANDSCAPE.ITEMDISCOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+                .text("-", C.TABLE_LANDSCAPE.SERVICE + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+                .text("-", C.TABLE_LANDSCAPE.DISCOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+                .text("-", C.TABLE_LANDSCAPE.VAT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+                ;
+
+                _.forEach(C.TAB.ITEM, function (value, key) {
+                    addColumnLine(value);
+                });
+
+                NewLine(TEXT_SPACE)
+
+                addTableLine(C.TAB.ITEM
+                    .INDEX, ROW_CURRENT, C.TAB.ITEM
+                        .LAST, ROW_CURRENT); //--row line
+        }
+        else {
+
+            var avgbills = record.GrandTotal / record.Bills
+            pdfReport.text(numberWithCommas(record.Bills) + " (฿ " + numberWithCommas2(avgbills.toFixed(2)) + ")", C.TABLE_LANDSCAPE.BILLS + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+
+            pdfReport.text("฿ " + numberWithCommas(record.GrandTotal.toFixed(2)), C.TABLE_LANDSCAPE.TOTAL + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            
+            //--paymentType อยู่ล่าง
+
+            pdfReport.text("฿ " + numberWithCommas(record.SubTotal.toFixed(2)), C.TABLE_LANDSCAPE.SUBTOTAL + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+           
+            var discount_value={
+               itemdiscount:record.ItemDiscount,
+               service:record.ServiceCharge,
+               discount:record.Discount,
+               vat:record.Vat
+           },
+           discount_tab={
+            itemdiscount:C.TABLE_LANDSCAPE.ITEMDISCOUNT+ C.TEXT_PADDING.LEFT,
+            service:C.TABLE_LANDSCAPE.SERVICE+ C.TEXT_PADDING.LEFT,
+            discount:C.TABLE_LANDSCAPE.DISCOUNT+ C.TEXT_PADDING.LEFT,
+            vat:C.TABLE_LANDSCAPE.VAT+ C.TEXT_PADDING.LEFT
+           }
+
+           _.forEach(discount_value, function (value, tab) {
+               if (value == 0) {
+                   pdfReport.text("-", discount_tab[tab], ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
+               } else {
+                   if (tab == "vat") {
+                       pdfReport.text(value.toFixed(2), discount_tab[tab], ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
+                   } else {
+                       pdfReport.text("฿ " + numberWithCommas(value.toFixed(2)), discount_tab[tab], ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
+                   }
+               }
+      
+           })
+                ;
+
+            //บางวันไม่มี payment list เพราะไม่ได้ขาย
+            var pt_list = 0;
+            let countPayment = _.reduce(record.PaymentList, (acc, e) => { return acc + 1 }, 0);
+            if (countPayment >= 1) {
+                _.forEach(record.PaymentList, function (paytype) {
+
+                    pt_list = paytype.name + "  ฿ " + numberWithCommas(paytype.amount) + " (" + paytype.bills + ")"
+                    pdfReport.text(pt_list, C.TABLE_LANDSCAPE.PAYMENTTYPE + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+
+                    _.forEach(C.TAB.ITEM, function (value, key) {
+                        addColumnLine(value);
+                    });
+                    NewLine(TEXT_SPACE)
+                })
+                addTableLine(C.TAB.ITEM
+                    .INDEX, ROW_CURRENT, C.TAB.ITEM
+                        .LAST, ROW_CURRENT); //--row line
+            }
+
+            else {
+                _.forEach(C.TAB.ITEM, function (value, key) {
+                    addColumnLine(value);
+                });
+
+                NewLine(TEXT_SPACE)
+
+                addTableLine(C.TAB.ITEM
+                    .INDEX, ROW_CURRENT, C.TAB.ITEM
+                        .LAST, ROW_CURRENT); //--row line
+            }
+
+        }
+
+        pdfReport.font('font_style_normal').fillColor('black');
+
     }
 
 
@@ -218,7 +318,7 @@ exports.Report = function (options, callback) {
 
         if (ROW_CURRENT > C.PAGE_TYPE.HEIGHT) {
 
-            pdfReport.addPage();
+            pdfReport.addPage(C.PAGE_TYPE.LANDSCAPE);
             ROW_CURRENT = C.ROW.DEFAULT;
 
             if (hilight == true) {
@@ -249,7 +349,7 @@ exports.Report = function (options, callback) {
         addTableLine(tab, ROW_CURRENT, tab, ROW_CURRENT + TEXT_SPACE);
     }
 
-    function addHilight(position,tab, row_height) {
+    function addHilight(position, tab, row_height) {
 
         pdfReport.rect(C.TAB.ITEM
             .INDEX, position, (tab.LAST - tab.INDEX), row_height).fill('#f0f0f0');

@@ -31,62 +31,46 @@ var COLUMN = {
 var TAB = {
     ITEM: {
         INDEX: 50,
-        TIME: 80,
-        REFER:160,
-        USER:200,
-        QUANTITY: 270,
-        ITEM:300,
-        AMOUNT: 420,
-        REASON: 470,
-        LAST: 550
-    },
-    TOPPING: {
-        INDEX: 50,
-        NAME: 70,
-        QUANTITY: 330,
-        LAST: 380
-    },
-    EXPENSE: {
-        INDEX: 50,
-        NAME: 70,
-        AMOUNT: 380,
-        PERCENT: 470,
-        LAST: 520
-    },
-    CHART: {
-        INDEX: 60,
-        NAME: 75,
-        AMOUNT: 185,
-        LAST: 280
-    },
-    CHART_2: {
-        INDEX: 350,
-        LAST: 500
-    },
-    TABLE_LANDSCAPE: {
-        INDEX: 50,
+        BILLS: 150,
+        TOTAL:240,
+        PAYMENTTYPE:310,
+        SUBTOTAL:430,
+        ITEMDISCOUNT: 500,
+        SERVICE:580,
+        DISCOUNT: 650,
+        VAT: 700,
         LAST: 740
-    }
+    },
+ 
+
 }
+var TABLE_LANDSCAPE= {
+    INDEX: TAB.ITEM.INDEX,
+    BILLS: TAB.ITEM.BILLS,
+    TOTAL:TAB.ITEM.TOTAL,
+    PAYMENTTYPE:TAB.ITEM.PAYMENTTYPE,
+    SUBTOTAL:TAB.ITEM.SUBTOTAL,
+    ITEMDISCOUNT: TAB.ITEM.ITEMDISCOUNT,
+    SERVICE:TAB.ITEM.SERVICE,
+    DISCOUNT: TAB.ITEM.DISCOUNT,
+    VAT: TAB.ITEM.VAT,
+    LAST: TAB.ITEM.LAST
+}
+
 var TAB_TABLE_GROUP = {
     ITEM: {
         INDEX: TAB.ITEM.INDEX,
-        QUANTITY: TAB.ITEM.QUANTITY,
-        AMOUNT: TAB.ITEM.AMOUNT,
-        PERCENT: TAB.ITEM.PERCENT,
+        BILLS: TAB.ITEM.BILLS,
+        TOTAL:TAB.ITEM.TOTAL,
+        PAYMENTTYPE:TAB.ITEM.PAYMENTTYPE,
+        SUBTOTAL:TAB.ITEM.SUBTOTAL,
+        ITEMDISCOUNT: TAB.ITEM.ITEMDISCOUNT,
+        SERVICE:TAB.ITEM.SERVICE,
+        DISCOUNT: TAB.ITEM.DISCOUNT,
+        VAT: TAB.ITEM.VAT,
         LAST: TAB.ITEM.LAST
-    },
-    TOPPING: {
-        INDEX: TAB.TOPPING.INDEX,
-        QUANTITY: TAB.TOPPING.QUANTITY,
-        LAST: TAB.TOPPING.LAST
-    },
-    EXPENSE: {
-        INDEX: TAB.EXPENSE.INDEX,
-        AMOUNT: TAB.EXPENSE.AMOUNT,
-        PERCENT: TAB.EXPENSE.PERCENT,
-        LAST: TAB.EXPENSE.LAST
     }
+   
 }
 var TEXT_PADDING = {
     LEFT: 5,
@@ -95,10 +79,12 @@ var TEXT_PADDING = {
 
 //--HEIGHT portrait 790,landscape 520
 var PAGE_TYPE = {
-    HEIGHT: 710,
-    MAGIN: {
+    HEIGHT: 530,
+    LANDSCAPE:{
+        autoFirstPage:"false",
+        layout:"landscape",
         margins: 10,
-        top: 10, bottom: 10, left: 50, right: 50
+        top: 10, bottom: 10, left: 50, right: 10
     }
 }
 
@@ -117,29 +103,7 @@ var STYLES_FONT = {
         width: TAB.ITEM.LAST - TAB.ITEM.INDEX,
         align: 'left'
     },
-    CHART: {
-        TITLE: {
-            width: TAB.CHART.AMOUNT - TAB.CHART.INDEX,
-            align: 'left'
-        },
-        AMOUNT: {
-            width: TAB.CHART.LAST - 15 - TAB.CHART.AMOUNT,
-            align: 'right'
-        }
-    },
-    CHART_2: {
-        width: TAB.CHART_2.LAST - TAB.CHART_2.INDEX,
-        align: 'left'
-    },
-    AMOUNT: {
-        width: TAB.ITEM.PERCENT - TAB.ITEM.AMOUNT,
-        align: 'left'
-    },
-    PERCENT: {
-        width: (TAB.ITEM.LAST - TAB.ITEM.PERCENT) + TEXT_PADDING.RIGHT,
-        align: 'right'
-    },
-
+   
     HILIGHT: {
 
     },
@@ -191,6 +155,7 @@ exports.COLUMN = COLUMN
 exports.TAB = TAB
 exports.STYLES_FONT = STYLES_FONT
 // exports.STYLES_BORDER = STYLES_BORDER
+exports.TABLE_LANDSCAPE=TABLE_LANDSCAPE
 exports.TAB_TABLE_GROUP = TAB_TABLE_GROUP
 exports.PAGE_TYPE = PAGE_TYPE
 exports.TEXT_PADDING = TEXT_PADDING

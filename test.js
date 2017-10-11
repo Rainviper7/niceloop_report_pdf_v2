@@ -27,10 +27,10 @@ var params = {},
 // orderrangePDF();
 // productbydaysPDF();
 // salebyemployeePDF();
-// salePDF();
+salePDF();
 // --------finish-------
 // dailyemailPDF();
-voidPDF();
+// voidPDF();
 // billsPDF();
 // productPDF();
 // stockPDF();
@@ -284,6 +284,8 @@ function salePDF() {
             params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
         params_default.data = mockdata||{};
+        params_default.from='2017-05-01T15:00:00',
+        params_default.to= '2017-05-30T15:00:00',
         params = _.assign({}, params_default)
 
     }

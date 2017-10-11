@@ -1,5 +1,4 @@
- 
-exports.data = {
+ exports.data = {
     "2017-05-01": {
         "Id": 698889581,
         "OrderId": 17921990,
