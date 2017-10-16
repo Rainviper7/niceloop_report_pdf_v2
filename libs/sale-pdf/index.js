@@ -282,7 +282,7 @@ exports.Report = function (options, callback) {
             if (countPayment >= 1) {
                 _.forEach(record.PaymentList, function (paytype) {
 
-                    pt_list = paytype.name + "  ฿ " + numberWithCommas(paytype.amount) + " (" + paytype.bills + ")"
+                    pt_list = paytype.name + "  ฿ " + numberWithCommas(paytype.amount.toFixed(2)) + " (" + paytype.bills + ")"
                     pdfReport.text(pt_list, C.TABLE_LANDSCAPE.PAYMENTTYPE + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
 
                     _.forEach(C.TAB.ITEM, function (value, key) {

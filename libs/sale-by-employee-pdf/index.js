@@ -21,6 +21,21 @@ var TEXT_SPACE_LOWER = 5,
     line_tick = 0.4 //default 0.8
     ;
 
+var title_group = {
+    index: "No.",
+    type: "Type",
+    quantity: "Qty",
+    item: "Product",
+    amount: "Amount",
+},
+    position_tab = {
+        index: C.TAB.ITEM.INDEX,
+        type: C.TAB.ITEM.TYPE,
+        quantity: C.TAB.ITEM.QUANTITY,
+        item: C.TAB.ITEM.ITEM,
+        amount: C.TAB.ITEM.AMOUNT,
+    };
+
 
 //--fillter
 
@@ -29,7 +44,7 @@ exports.Report = function (options, callback) {
     var _path = options.filePath,
         _data = options.data,
         filename = _path,
-        data = _data,
+        data = _data.data,
         shopname = options.shopname
         ;
 
@@ -41,7 +56,7 @@ exports.Report = function (options, callback) {
         ;
 
     //----set font
-    var fontpath = path.join(__dirname, 'fonts', 'ARIALUNI.ttf'),
+    var fontpath = path.join(__dirname, 'fonts', 'droidsansth.ttf'),
         fontpath_bold = path.join(__dirname, 'fonts', 'arialbd.ttf'),
         fontpath_bold_bath = path.join(__dirname, 'fonts', 'cambriab.ttf')
         ;
@@ -107,47 +122,69 @@ exports.Report = function (options, callback) {
     }
 
     function drawBody() {
-        var title_group = {
-            index: "No.",
-            time: "Time",
-            refer: "Refer",
-            user: "ApproveBy",
-            quantity: "Qty",
-            item: "Items",
-            amount: "Price",
-            reson: "Reason"
-        },
-        position_tab={
-            index: C.TAB.ITEM.INDEX,
-            time: C.TAB.ITEM.TIME,
-            refer: C.TAB.ITEM.REFER,
-            user: C.TAB.ITEM.USER,
-            quantity: C.TAB.ITEM.QUANTITY,
-            item: C.TAB.ITEM.ITEM,
-            amount: C.TAB.ITEM.AMOUNT,
-            reson: C.TAB.ITEM.REASON
-        };
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
-                    .LAST, ROW_CURRENT); //--row line
 
-            _.forEach(title_group,function(title,tab){
-                pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-                            .text(title,position_tab[tab]+C.TEXT_PADDING.LEFT,ROW_CURRENT+TEXT_SPACE_UPPER,C.STYLES_FONT.NORMAL);
-            })
+        addTableLine(C.TAB.ITEM
+            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                .LAST, ROW_CURRENT); //--row line
+
+    _.forEach(data.Sales,function(value,key){
             
+                            addItemGroup(value.User,title_group)
+             
+                            
             _.forEach(C.TAB.ITEM, function (value, key) {
-                addColumnLine(value);
-            });
+                
+                    addColumnLine(value);
+                });
+                addTableLine(C.TAB.ITEM
+                    .INDEX, ROW_CURRENT, C.TAB.ITEM
+                        .LAST, ROW_CURRENT); //--row line
 
-            NewLine(TEXT_SPACE)
+
+                NewLine(TEXT_SPACE)
+
+                _.forEach(value.Items, function (value2, index) {
+                 
+                        addItems(value2, index)
+
+                        _.forEach(C.TAB.ITEM, function (value, key) {
+                            
+                                addColumnLine(value);
+                            });
+
+                        addTableLine(C.TAB.ITEM
+                            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                                .LAST, ROW_CURRENT); //--row line
+            
+                        NewLine(TEXT_SPACE)
+                   
+                })
+
+                addTotalItem(100, 100000)
+
+                _.forEach(C.TAB.ITEM, function (value, key) {
+                    
+                        addColumnLine(value);
+                    });
 
             addTableLine(C.TAB.ITEM
                 .INDEX, ROW_CURRENT, C.TAB.ITEM
                     .LAST, ROW_CURRENT); //--row line
 
             NewLine(TEXT_SPACE)
+                    
+        addTableLine(C.TAB.ITEM
+            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                .LAST, ROW_CURRENT); //--row line
+                
             NewLine(TEXT_SPACE)
+            
+
+        })
+
+
+        NewLine(TEXT_SPACE)
+
     }
 
     function drawFooter() {
@@ -173,45 +210,49 @@ exports.Report = function (options, callback) {
             });
     }
 
-    function addItemGroup(itemgroup) {
-        pdfReport.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
-            .text("Qty", C.TAB_TABLE_GROUP.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("Total", C.TAB_TABLE_GROUP.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("Percent", C.TAB_TABLE_GROUP.ITEM.PERCENT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
-        pdfReport.font("font_style_normal");
-        NewLine(TEXT_SPACE);
+    function addItemGroup(name, itemgroup) {
+        
+            pdfReport.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
+                .text(name, C.TAB_TABLE_GROUP.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            ;
+                
+                    _.forEach(C.TAB_TABLE_GROUP.ITEM, function (value, key) {
+                    addColumnLine(value);
+                    });
+            
+            addTableLine(C.TAB.ITEM
+                .INDEX, ROW_CURRENT, C.TAB.ITEM
+                    .LAST, ROW_CURRENT); //--row line
 
-        _.forEach(C.TAB_TABLE_GROUP.ITEM, function (value, key) {
-            addColumnLine(value);
-        });
+        NewLine(TEXT_SPACE)
+        
+        _.forEach(itemgroup, function (title, tab) {
+pdfReport.fontSize(C.FONT.SIZE.NORMAL)
+                .text(title, position_tab[tab] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
+        })
+        pdfReport.font("font_style_normal")
 
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text(itemgroup.Name, C.TAB_TABLE_GROUP.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(itemgroup.Quantity, C.TAB_TABLE_GROUP.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(itemgroup.Amount.toFixed(2)), C.TAB_TABLE_GROUP.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text(itemgroup.Percent + "%", C.TAB_TABLE_GROUP.ITEM.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT);
-
-    }
-
+             }
+            
     function addItems(item, key) {
 
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text(key + 1 + ". ", C.TAB.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Name, C.TAB.ITEM.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Quantity, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(item.Amount.toFixed(2)), C.TAB.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text(item.Percent + "%", C.TAB.ITEM.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT)
-            ;
+        pdfReport.font("font_style_normal").fontSize(C.FONT.SIZE.SMALL)  
+        pdfReport   .text(key, C.TAB.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+        pdfReport.text(item.Type, C.TAB.ITEM.TYPE + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+        pdfReport.text(item.Name, C.TAB.ITEM.ITEM + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+         pdfReport   .text(item.Qty, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+        pdfReport    .text( "฿ "+numberWithCommas(item.Amount.toFixed(2) ), C.TAB.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
     }
 
-    function addSubItems(subitem) {
 
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text("- " + subitem.Name, C.TAB.ITEM.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(subitem.Quantity, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(subitem.Amount.toFixed(2)), C.TAB.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            ;
+    function addTotalItem(quantity,amount){
+        pdfReport.font("font_style_bold").fontSize(C.FONT.SIZE.SMALL)  
+        pdfReport   .text("Total: ", C.TAB.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+         pdfReport   .text(quantity, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+        pdfReport    .text(numberWithCommas(amount.toFixed(2) ), C.TAB.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
     }
+
+
 
 
     function checkPositionOutsideArea() {
@@ -257,7 +298,7 @@ exports.Report = function (options, callback) {
         pdfReport.fill('black');
     }
 
-    function numberWithCommas(x) {
+    function numberWithCommas(x)  {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
