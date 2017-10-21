@@ -38,6 +38,14 @@ var TAB = {
         AMOUNT:400,
         LAST: 550
     },
+    SUMMARY_CHART: {
+        INDEX: 50,
+        FOOD:100,
+        DRINK:200,
+        DESSERT:300,
+        OTHER:400,
+        LAST: 500
+    },
     TABLE_LANDSCAPE: {
         INDEX: 50,
         LAST: 740
