@@ -24,16 +24,17 @@ var params = {},
 //----main---
 // detailbillsPDF();
 // memberPDF();
-// orderrangePDF();
 // productbydaysPDF();
-salebyemployeePDF();
+
 
 // --------finish-------
+// salebyemployeePDF();
+
 // dailyemailPDF();
 // voidPDF();
 // billsPDF();
 // productPDF();
-// stockPDF();
+stockPDF();
 // salePDF();
 
 
@@ -170,7 +171,8 @@ function memberPDF() {
 function orderrangePDF() {
 
     //--------void--------
-    var orderrangeReport = require('./libs/order_on_time_range_report/index')
+    var orderrangeReport = require('./libs/order-ontime-range-pdf/index'),
+    mockdata = require('./libs/order-ontime-range-pdf/mock_data')
         ;
 
     //-----------in dev mode
@@ -182,7 +184,7 @@ function orderrangePDF() {
 
             params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        // params_default.data = mockdata||{};
+        params_default.data = mockdata||{};
         params = _.assign({}, params_default)
 
     }

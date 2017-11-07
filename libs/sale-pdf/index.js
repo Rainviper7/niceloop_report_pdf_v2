@@ -4,7 +4,8 @@ const _ = require('lodash'),
     fs = require('fs'),
     moment = require('moment'),
     path = require('path'),
-    C = require('./constant')
+    C = require('./constant'),
+    utils = require('../utils')
     ;
 
 //---------constant
@@ -128,7 +129,7 @@ exports.Report = function (options, callback) {
   
         NewLine(TEXT_SPACE_SMALL);
 
-        addGennerateDate()
+        utils.addGennerateDate(pdfReport,ROW_CURRENT,C.FONT.SIZE.SMALL);
 
         pdfReport.fillColor('black');
         NewLine(TEXT_SPACE);
@@ -175,7 +176,7 @@ exports.Report = function (options, callback) {
             .INDEX, ROW_CURRENT, C.TAB.ITEM
                 .LAST, ROW_CURRENT); //--row line
 
-        addGennerateDate();
+        utils.addGennerateDate(pdfReport,ROW_CURRENT,C.FONT.SIZE.SMALL);
 
         pdfReport.fillColor('black');
 
@@ -183,18 +184,18 @@ exports.Report = function (options, callback) {
 
     }
 
-    function addGennerateDate() {
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL).fillColor('#333333')
-            .text("Generated at : " + datetime
-            , C.TAB.ITEM.INDEX, ROW_CURRENT, {
-                width: C.TAB.ITEM.LAST - C.TAB.ITEM.INDEX,
-                align: 'left'
-            });
-    }
+    // function addGennerateDate() {
+    //     pdfReport.fontSize(C.FONT.SIZE.NORMAL).fillColor('#333333')
+    //         .text("Generated at : " + datetime
+    //         , C.TAB.ITEM.INDEX, ROW_CURRENT, {
+    //             width: C.TAB.ITEM.LAST - C.TAB.ITEM.INDEX,
+    //             align: 'left'
+    //         });
+    // }
 
-    function addItemGroup(itemgroup) {
+    function addItemGroup(titlename) {
         pdfReport.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL)
-        _.forEach(itemgroup, function (title, tab) {
+        _.forEach(titlename, function (title, tab) {
             pdfReport.fontSize(C.FONT.SIZE.NORMAL)
                 .text(title, position_tab[tab] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
         })

@@ -29,7 +29,7 @@ var COLUMN = {
 
 //----------table_layout
 var TAB = {
-    ITEM: {
+    ITEMS: {
         INDEX: 50,
         NAME:80,
         BEGIN:270,
@@ -48,8 +48,8 @@ var TAB = {
 }
 var TAB_TABLE_GROUP = {
     ITEM: {
-        INDEX: TAB.ITEM.INDEX,
-        LAST:TAB.ITEM.LAST
+        INDEX: TAB.ITEMS.INDEX,
+        LAST:TAB.ITEMS.LAST
     },
 }
 var TEXT_PADDING = {
@@ -78,7 +78,7 @@ var STYLES_FONT = {
         align: 'left'
     },
     HEADER: {
-        width: TAB.ITEM.LAST - TAB.ITEM.INDEX,
+        width: TAB.ITEMS.LAST - TAB.ITEMS.INDEX,
         align: 'left'
     },
     HILIGHT: {

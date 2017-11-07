@@ -30,6 +30,7 @@ exports.Report = function (options, callback) {
         _data = options.data,
         filename = _path,
         data = _data,
+        data_activity = data.data.Activity,
         shopname = options.shopname
         ;
 
@@ -41,7 +42,7 @@ exports.Report = function (options, callback) {
         ;
 
     //----set font
-    var fontpath = path.join(__dirname, 'fonts', 'ARIALUNI.ttf'),
+    var fontpath = path.join(__dirname, 'fonts', C.FONT.NAME),
         fontpath_bold = path.join(__dirname, 'fonts', 'arialbd.ttf'),
         fontpath_bold_bath = path.join(__dirname, 'fonts', 'cambriab.ttf')
         ;
@@ -108,25 +109,33 @@ exports.Report = function (options, callback) {
 
     function drawBody() {
         var title_group = {
-            index: "No.",
-            time: "Time",
-            refer: "Refer",
-            user: "ApproveBy",
-            quantity: "Qty",
-            item: "Items",
-            amount: "Price",
-            reson: "Reason"
+            index: "",
+            time: "Hour",
+            add: "Add",
+            void:"Void",
+            payment:"Payment"
         },
         position_tab={
             index: C.TAB.ITEM.INDEX,
             time: C.TAB.ITEM.TIME,
-            refer: C.TAB.ITEM.REFER,
-            user: C.TAB.ITEM.USER,
-            quantity: C.TAB.ITEM.QUANTITY,
-            item: C.TAB.ITEM.ITEM,
-            amount: C.TAB.ITEM.AMOUNT,
-            reson: C.TAB.ITEM.REASON
+            add:C.TAB.ITEM.ADD,
+            void:C.TAB.ITEM.VOID,
+            payment:C.TAB.ITEM.PAYMENT
+ 
         };
+        addTableLine(C.TAB.ITEM
+            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                .LAST, ROW_CURRENT); //--row line
+
+        _.forEach(C.TAB_TABLE_GROUP.ITEM, function (value, key) {
+            addColumnLine(value);
+        });
+            pdfReport.fontSize(C.FONT.SIZE.NORMAL)
+                .text("Time",C.TAB_TABLE_GROUP.ITEM.TIME + C.TEXT_PADDING.LEFT,ROW_CURRENT+TEXT_SPACE_UPPER,C.STYLES_FONT.NORMAL)
+                .text("Overall",C.TAB_TABLE_GROUP.ITEM.DAY + C.TEXT_PADDING.LEFT,ROW_CURRENT+TEXT_SPACE_UPPER,C.STYLES_FONT.NORMAL);
+
+        NewLine(TEXT_SPACE)
+
             addTableLine(C.TAB.ITEM
                 .INDEX, ROW_CURRENT, C.TAB.ITEM
                     .LAST, ROW_CURRENT); //--row line
@@ -141,6 +150,32 @@ exports.Report = function (options, callback) {
             });
 
             NewLine(TEXT_SPACE)
+
+            //------------sort by date-----------
+            var sort_record =_.sortBy(data_activity,function(record,index){
+                return record.date
+            })
+            var group_record =_.groupBy(sort_record,function(record1,date){
+                return record1.date
+            })
+            _.forEach(group_record,function(record,index){
+                pdfReport.fontSize(C.FONT.SIZE.SMALL)
+                    .text(record.timestamp,C.TAB.ITEM.TIME + C.TEXT_PADDING.LEFT,ROW_CURRENT+TEXT_SPACE_UPPER,C.STYLES_FONT.NORMAL)
+                    .text(record.date,C.TAB.ITEM.ADD + C.TEXT_PADDING.LEFT,ROW_CURRENT+TEXT_SPACE_UPPER,C.STYLES_FONT.NORMAL)
+                    .text(record.id,C.TAB.ITEM.VOID + C.TEXT_PADDING.LEFT,ROW_CURRENT+TEXT_SPACE_UPPER,C.STYLES_FONT.NORMAL)
+
+                    _.forEach(C.TAB.ITEM, function (value, key) {
+                        addColumnLine(value);
+                    });
+
+                    addTableLine(C.TAB.ITEM
+                        .INDEX, ROW_CURRENT, C.TAB.ITEM
+                            .LAST, ROW_CURRENT); //--row line
+
+                NewLine(TEXT_SPACE)
+            })
+
+            //------------------------
 
             addTableLine(C.TAB.ITEM
                 .INDEX, ROW_CURRENT, C.TAB.ITEM
@@ -175,7 +210,7 @@ exports.Report = function (options, callback) {
 
     function addItemGroup(itemgroup) {
         pdfReport.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
-            .text("Qty", C.TAB_TABLE_GROUP.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text("Qty", C.TAB_TABLE_GROUP.ITEM.TIME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text("Total", C.TAB_TABLE_GROUP.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text("Percent", C.TAB_TABLE_GROUP.ITEM.PERCENT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
         pdfReport.font("font_style_normal");
@@ -187,7 +222,7 @@ exports.Report = function (options, callback) {
 
         pdfReport.fontSize(C.FONT.SIZE.NORMAL)
             .text(itemgroup.Name, C.TAB_TABLE_GROUP.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(itemgroup.Quantity, C.TAB_TABLE_GROUP.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(itemgroup.Quantity, C.TAB_TABLE_GROUP.ITEM.TIME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text("฿ " + numberWithCommas(itemgroup.Amount.toFixed(2)), C.TAB_TABLE_GROUP.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
             .text(itemgroup.Percent + "%", C.TAB_TABLE_GROUP.ITEM.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT);
 

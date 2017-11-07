@@ -1,6 +1,6 @@
 
 var FONT = {
-    NAME: 'Arial',
+    NAME: 'droidsansth.ttf',
     SIZE: {
         HEADER: 14,
         BIG: 11,
@@ -32,36 +32,10 @@ var TAB = {
     ITEM: {
         INDEX: 50,
         TIME: 80,
-        REFER:160,
-        USER:200,
-        QUANTITY: 270,
-        ITEM:300,
-        AMOUNT: 420,
-        REASON: 470,
+        ADD:150,
+        VOID:250,
+        PAYMENT:350,
         LAST: 550
-    },
-    TOPPING: {
-        INDEX: 50,
-        NAME: 70,
-        QUANTITY: 330,
-        LAST: 380
-    },
-    EXPENSE: {
-        INDEX: 50,
-        NAME: 70,
-        AMOUNT: 380,
-        PERCENT: 470,
-        LAST: 520
-    },
-    CHART: {
-        INDEX: 60,
-        NAME: 75,
-        AMOUNT: 185,
-        LAST: 280
-    },
-    CHART_2: {
-        INDEX: 350,
-        LAST: 500
     },
     TABLE_LANDSCAPE: {
         INDEX: 50,
@@ -70,22 +44,9 @@ var TAB = {
 }
 var TAB_TABLE_GROUP = {
     ITEM: {
-        INDEX: TAB.ITEM.INDEX,
-        QUANTITY: TAB.ITEM.QUANTITY,
-        AMOUNT: TAB.ITEM.AMOUNT,
-        PERCENT: TAB.ITEM.PERCENT,
+        TIME: TAB.ITEM.INDEX,
+        DAY: TAB.ITEM.ADD,
         LAST: TAB.ITEM.LAST
-    },
-    TOPPING: {
-        INDEX: TAB.TOPPING.INDEX,
-        QUANTITY: TAB.TOPPING.QUANTITY,
-        LAST: TAB.TOPPING.LAST
-    },
-    EXPENSE: {
-        INDEX: TAB.EXPENSE.INDEX,
-        AMOUNT: TAB.EXPENSE.AMOUNT,
-        PERCENT: TAB.EXPENSE.PERCENT,
-        LAST: TAB.EXPENSE.LAST
     }
 }
 var TEXT_PADDING = {
@@ -115,20 +76,6 @@ var STYLES_FONT = {
     },
     HEADER: {
         width: TAB.ITEM.LAST - TAB.ITEM.INDEX,
-        align: 'left'
-    },
-    CHART: {
-        TITLE: {
-            width: TAB.CHART.AMOUNT - TAB.CHART.INDEX,
-            align: 'left'
-        },
-        AMOUNT: {
-            width: TAB.CHART.LAST - 15 - TAB.CHART.AMOUNT,
-            align: 'right'
-        }
-    },
-    CHART_2: {
-        width: TAB.CHART_2.LAST - TAB.CHART_2.INDEX,
         align: 'left'
     },
     AMOUNT: {

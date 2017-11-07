@@ -5,6 +5,7 @@ const _ = require('lodash'),
     moment = require('moment'),
     path = require('path'),
     C = require('./constant')
+    utils = require('../utils')
     ;
 
 //---------constant
@@ -18,7 +19,7 @@ var TEXT_SPACE_LOWER = 5,
     hilight = false,
     row_hilight = 0,
     row_chart_2 = 0,
-    line_tick = 0.4 //default 0.8
+    LINE_TICK = 0.4 //default 0.8
     ;
 //--style
 var title_group = {
@@ -33,15 +34,15 @@ var title_group = {
     end: "End"
 },
     position_tab = {
-        index: C.TAB.ITEM.INDEX,
-        name: C.TAB.ITEM.NAME,
-        begin: C.TAB.ITEM.BEGIN,
-        add: C.TAB.ITEM.ADD,
-        sold: C.TAB.ITEM.SOLD,
-        adjust: C.TAB.ITEM.ADJUST,
-        withdraw: C.TAB.ITEM.WITHDRAW,
-        return: C.TAB.ITEM.RETURN,
-        end: C.TAB.ITEM.END
+        index: C.TAB.ITEMS.INDEX,
+        name: C.TAB.ITEMS.NAME,
+        begin: C.TAB.ITEMS.BEGIN,
+        add: C.TAB.ITEMS.ADD,
+        sold: C.TAB.ITEMS.SOLD,
+        adjust: C.TAB.ITEMS.ADJUST,
+        withdraw: C.TAB.ITEMS.WITHDRAW,
+        return: C.TAB.ITEMS.RETURN,
+        end: C.TAB.ITEMS.END
     };
 
 
@@ -53,7 +54,8 @@ exports.Report = function (options, callback) {
         _data = options.data,
         filename = _path,
         data = _data,
-        shopname = options.shopname
+        shopname = options.shopname,
+        callback = callback
         ;
 
     var pdfReport = new pdf();
@@ -108,21 +110,21 @@ exports.Report = function (options, callback) {
 
     function drawHeader() {
 
-        var header_data = {
-            shopname: shopname,
-            report_type: report_type
-        }
+        var header_data = [
+            shopname,
+            report_type
+        ]
             ;
 
         _.forEach(header_data, function (value, index) {
             pdfReport.fontSize(C.FONT.SIZE.HEADER)
-                .text(value, C.TAB.ITEM.INDEX, ROW_CURRENT, C.STYLES_FONT.HEADER);
+                .text(value, C.TAB.ITEMS.INDEX, ROW_CURRENT, C.STYLES_FONT.HEADER);
             NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE_LOWER);
         })
 
         NewLine(TEXT_SPACE_SMALL);
 
-        addGennerateDate()
+        utils.addGennerateDate(pdfReport,ROW_CURRENT,C.FONT.SIZE.SMALL,"#aa0000")
 
         pdfReport.fillColor('black');
         NewLine(TEXT_SPACE);
@@ -131,65 +133,64 @@ exports.Report = function (options, callback) {
 
     function drawBody() {
 
-        var stockfiller = _.groupBy(data.data.Stock, function (item1) {
+        var stockGroupfiller = _.groupBy(data.data.Stock, function (item1) {
             return item1.GroupName
         })
 
-        _.forEach(stockfiller, function (itemgroup, index) {
+        _.forEach(stockGroupfiller, function (stockList, groupName) {
 
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
-                    .LAST, ROW_CURRENT); //--row line
+            addTableLine(); //--row line
 
             _.forEach(C.TAB_TABLE_GROUP.ITEM, function (value, key) {
                 addColumnLine(value);
             });
 
-            addItemGroup(index);
+            addItemGroup(groupName);
 
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
-                    .LAST, ROW_CURRENT); //--row line
+            addTableLine(); //--row line
 
-            _.forEach(C.TAB.ITEM, function (value, key) {
+            _.forEach(C.TAB.ITEMS, function (value, key) {
                 addColumnLine(value);
             });
 
             NewLine(TEXT_SPACE)
 
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
-                    .LAST, ROW_CURRENT); //--row line
+            addTableLine() //--row line
 
-            _.forEach(itemgroup, function (value1, key1) {
+            _.forEach(stockList, function (stockItem, indexStock) {
 
-                addItems(value1, key1)
+                addItems(stockItem, indexStock)
 
-                _.forEach(C.TAB.ITEM, function (value, key) {
+                _.forEach(C.TAB.ITEMS, function (value, key) {
                     addColumnLine(value);
                 });
 
-                addTableLine(C.TAB.ITEM
-                    .INDEX, ROW_CURRENT, C.TAB.ITEM
-                        .LAST, ROW_CURRENT); //--row line
+                addTableLine(); //--row line
 
                 NewLine(TEXT_SPACE)
             })
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
+            addTableLine(C.TAB.ITEMS
+                .INDEX, ROW_CURRENT, C.TAB.ITEMS
                     .LAST, ROW_CURRENT); //--row line
             NewLine(TEXT_SPACE)
         })
-       
+
     }
 
     function drawFooter() {
 
-        addTableLine(C.TAB.ITEM
-            .INDEX, ROW_CURRENT, C.TAB.ITEM
-                .LAST, ROW_CURRENT); //--row line
+        // addTableLine(C.TAB.ITEMS
+        //     .INDEX, ROW_CURRENT, C.TAB.ITEMS
+        //         .LAST, ROW_CURRENT); //--row line
 
-        addGennerateDate();
+                utils.addTableLine(pdfReport, ROW_CURRENT)
+
+
+        // addGennerateDate();
+        utils.addGennerateDate(pdfReport,ROW_CURRENT,C.FONT.SIZE.SMALL,"#aa0000")
+        NewLine(TEXT_SPACE)
+        
+        pdfReport.fontSize(C.FONT.SIZE.NORMAL).text( utils.addGennerateDateFormat())
 
         pdfReport.fillColor('black');
 
@@ -200,8 +201,8 @@ exports.Report = function (options, callback) {
     function addGennerateDate() {
         pdfReport.fontSize(C.FONT.SIZE.NORMAL).fillColor('#333333')
             .text("Generated at : " + datetime
-            , C.TAB.ITEM.INDEX, ROW_CURRENT, {
-                width: C.TAB.ITEM.LAST - C.TAB.ITEM.INDEX,
+            , C.TAB.ITEMS.INDEX, ROW_CURRENT, {
+                width: C.TAB.ITEMS.LAST - C.TAB.ITEMS.INDEX,
                 align: 'left'
             });
     }
@@ -228,15 +229,15 @@ exports.Report = function (options, callback) {
 
 
         pdfReport.fontSize(C.FONT.SIZE.SMALL)
-            .text(key + 1 + ". ", C.TAB.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Name + " [" + item.Unit + "]", C.TAB.ITEM.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Begin, C.TAB.ITEM.BEGIN + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Add, C.TAB.ITEM.ADD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Sold, C.TAB.ITEM.SOLD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Adjust, C.TAB.ITEM.ADJUST + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Withdraw, C.TAB.ITEM.WITHDRAW + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Return, C.TAB.ITEM.RETURN + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.End, C.TAB.ITEM.END + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(key + 1 + ". ", C.TAB.ITEMS.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(item.Name + " [" + item.Unit + "]", C.TAB.ITEMS.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas( item.Begin ), C.TAB.ITEMS.BEGIN + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text( utils.numberWithCommas ( item.Add ) , C.TAB.ITEMS.ADD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas (item.Sold), C.TAB.ITEMS.SOLD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas (item.Adjust), C.TAB.ITEMS.ADJUST + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas (item.Withdraw), C.TAB.ITEMS.WITHDRAW + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas (item.Return), C.TAB.ITEMS.RETURN + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas (item.End), C.TAB.ITEMS.END + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
 
             ;
     }
@@ -245,7 +246,7 @@ exports.Report = function (options, callback) {
 
         if (ROW_CURRENT > C.PAGE_TYPE.HEIGHT) {
 
-            pdfReport.addPage({autoFirstPage:false});
+            pdfReport.addPage({ autoFirstPage: false });
             ROW_CURRENT = C.ROW.DEFAULT;
 
             if (hilight == true) {
@@ -259,18 +260,27 @@ exports.Report = function (options, callback) {
     }
 
     function addTableLine(sx, sy, ex, ey) {
-        pdfReport.moveTo(sx, sy).lineTo(ex, ey).lineWidth(line_tick).strokeColor('gray').stroke();
+
+        var _default = {
+            sx: sx || C.TAB.ITEMS.INDEX,
+            sy: sy || ROW_CURRENT,
+            ex: ex || C.TAB.ITEMS.LAST,
+            ey: ey || ROW_CURRENT
+        }
+
+
+        pdfReport.moveTo(_default.sx, _default. sy).lineTo(_default.ex, _default.ey).lineWidth(LINE_TICK).strokeColor('gray').stroke();
     }
 
     function addDashLine(sx, sy, ex, ey) {
-        pdfReport.moveTo(sx, sy).lineTo(ex, ey).lineWidth(line_tick).dash(5, { space: 5 }).strokeColor('drakgray').strokeOpacity(0.2).stroke().undash();
+        pdfReport.moveTo(sx, sy).lineTo(ex, ey).lineWidth(LINE_TICK).dash(5, { space: 5 }).strokeColor('drakgray').strokeOpacity(0.2).stroke().undash();
         pdfReport.strokeColor('black').strokeOpacity(1).lineWidth(1);
     }
 
     function NewLine(px) {
         checkPositionOutsideArea()
         ROW_CURRENT += px;
-  
+
     }
 
     function addColumnLine(tab) {
@@ -279,20 +289,20 @@ exports.Report = function (options, callback) {
 
     function addHilight(position, tab, row_height) {
 
-        pdfReport.rect(C.TAB.ITEM
+        pdfReport.rect(C.TAB.ITEMS
             .INDEX, position, (tab.LAST - tab.INDEX), row_height).fill('#f0f0f0');
 
         pdfReport.fill('black');
     }
 
-    function numberWithCommas(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
+    // function numberWithCommas(x) {
+    //     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // }
 
-    function numberWithCommas2(x) {
-        var parts = x.toString().split(".");
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return parts.join(".");
-    }
+    // function numberWithCommas2(x) {
+    //     var parts = x.toString().split(".");
+    //     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    //     return parts.join(".");
+    // }
 
 }
