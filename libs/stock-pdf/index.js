@@ -5,7 +5,7 @@ const _ = require('lodash'),
     moment = require('moment'),
     path = require('path'),
     C = require('./constant')
-    utils = require('../utils')
+utils = require('../utils')
     ;
 
 //---------constant
@@ -58,7 +58,9 @@ exports.Report = function (options, callback) {
         callback = callback
         ;
 
-    var pdfReport = new pdf();
+    var pdfReport = new pdf({
+        size: "A4"
+    });
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss"),
@@ -124,7 +126,7 @@ exports.Report = function (options, callback) {
 
         NewLine(TEXT_SPACE_SMALL);
 
-        utils.addGennerateDate(pdfReport,ROW_CURRENT,C.FONT.SIZE.SMALL,"#aa0000")
+        utils.addGennerateDate(pdfReport, ROW_CURRENT, C.FONT.SIZE.SMALL, "#aa0000")
 
         pdfReport.fillColor('black');
         NewLine(TEXT_SPACE);
@@ -183,14 +185,14 @@ exports.Report = function (options, callback) {
         //     .INDEX, ROW_CURRENT, C.TAB.ITEMS
         //         .LAST, ROW_CURRENT); //--row line
 
-                utils.addTableLine(pdfReport, ROW_CURRENT)
+        utils.addTableLine(pdfReport, ROW_CURRENT)
 
 
         // addGennerateDate();
-        utils.addGennerateDate(pdfReport,ROW_CURRENT,C.FONT.SIZE.SMALL,"#aa0000")
+        utils.addGennerateDate(pdfReport, ROW_CURRENT, C.FONT.SIZE.SMALL, "#aa0000")
         NewLine(TEXT_SPACE)
-        
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL).text( utils.addGennerateDateFormat())
+
+        pdfReport.fontSize(C.FONT.SIZE.NORMAL).text(utils.addGennerateDateFormat())
 
         pdfReport.fillColor('black');
 
@@ -231,13 +233,13 @@ exports.Report = function (options, callback) {
         pdfReport.fontSize(C.FONT.SIZE.SMALL)
             .text(key + 1 + ". ", C.TAB.ITEMS.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
             .text(item.Name + " [" + item.Unit + "]", C.TAB.ITEMS.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(utils.numberWithCommas( item.Begin ), C.TAB.ITEMS.BEGIN + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text( utils.numberWithCommas ( item.Add ) , C.TAB.ITEMS.ADD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(utils.numberWithCommas (item.Sold), C.TAB.ITEMS.SOLD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(utils.numberWithCommas (item.Adjust), C.TAB.ITEMS.ADJUST + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(utils.numberWithCommas (item.Withdraw), C.TAB.ITEMS.WITHDRAW + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(utils.numberWithCommas (item.Return), C.TAB.ITEMS.RETURN + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(utils.numberWithCommas (item.End), C.TAB.ITEMS.END + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas(item.Begin), C.TAB.ITEMS.BEGIN + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas(item.Add), C.TAB.ITEMS.ADD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas(item.Sold), C.TAB.ITEMS.SOLD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas(item.Adjust), C.TAB.ITEMS.ADJUST + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas(item.Withdraw), C.TAB.ITEMS.WITHDRAW + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas(item.Return), C.TAB.ITEMS.RETURN + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+            .text(utils.numberWithCommas(item.End), C.TAB.ITEMS.END + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
 
             ;
     }
@@ -269,7 +271,7 @@ exports.Report = function (options, callback) {
         }
 
 
-        pdfReport.moveTo(_default.sx, _default. sy).lineTo(_default.ex, _default.ey).lineWidth(LINE_TICK).strokeColor('gray').stroke();
+        pdfReport.moveTo(_default.sx, _default.sy).lineTo(_default.ex, _default.ey).lineWidth(LINE_TICK).strokeColor('gray').stroke();
     }
 
     function addDashLine(sx, sy, ex, ey) {

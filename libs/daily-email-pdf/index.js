@@ -43,7 +43,9 @@ exports.Report = function (options, callback) {
         shopname = options.shopname
         ;
 
-    var pdfReport = new pdf();
+    var pdfReport = new pdf({
+        size: "A4"
+    });
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss"),
@@ -169,7 +171,7 @@ exports.Report = function (options, callback) {
 
                 if (item.SubItems.length == 1) {
                     if (hilight) {
-                        addHilight(ROW_CURRENT,C.TAB.ITEM, TEXT_SPACE)
+                        addHilight(ROW_CURRENT, C.TAB.ITEM, TEXT_SPACE)
                     }
 
                     addTableLine(C.TAB.ITEM
@@ -192,7 +194,7 @@ exports.Report = function (options, callback) {
                 else {
 
                     if (hilight) {
-                        addHilight(ROW_CURRENT,C.TAB.ITEM, TEXT_SPACE)
+                        addHilight(ROW_CURRENT, C.TAB.ITEM, TEXT_SPACE)
                     }
                     addTableLine(C.TAB.ITEM
                         .INDEX, ROW_CURRENT, C.TAB.ITEM
@@ -214,7 +216,7 @@ exports.Report = function (options, callback) {
                     _.forEach(subitemfillter, function (subitem) {
 
                         if (hilight) {
-                            addHilight(ROW_CURRENT,C.TAB.ITEM, TEXT_SPACE)
+                            addHilight(ROW_CURRENT, C.TAB.ITEM, TEXT_SPACE)
                         }
 
                         _.forEach(C.TAB.ITEM, function (value, key) {
@@ -262,11 +264,11 @@ exports.Report = function (options, callback) {
         else {
             pdfReport.fontSize(C.FONT.SIZE.HEADER)
                 .text("Topping Menu", C.TAB.ITEM.INDEX, ROW_CURRENT, C.STYLES_FONT.NORMAL);
-                NewLine(TEXT_SPACE);               
+            NewLine(TEXT_SPACE);
 
             _.forEach(ToppingGroupsFiltered, function (expen1, key) {
 
-                NewLine(TEXT_SPACE); 
+                NewLine(TEXT_SPACE);
                 addToppingGroups(expen1);//--text
 
                 _.forEach(C.TAB_TABLE_GROUP.TOPPING, function (value, key) {
@@ -287,7 +289,7 @@ exports.Report = function (options, callback) {
 
                     if (((key + 1) % 2) == 1) {
 
-                        addHilight(ROW_CURRENT,C.TAB.TOPPING, TEXT_SPACE)
+                        addHilight(ROW_CURRENT, C.TAB.TOPPING, TEXT_SPACE)
 
                     }
 
@@ -364,10 +366,10 @@ exports.Report = function (options, callback) {
 
                     if (((key + 1) % 2) == 1) {
 
-                        addHilight(ROW_CURRENT,C.TAB_TABLE_GROUP.TOPPING, TEXT_SPACE)
+                        addHilight(ROW_CURRENT, C.TAB_TABLE_GROUP.TOPPING, TEXT_SPACE)
 
                     }
-                    
+
                     addToppingItems(toppingitem, key);//--text
 
                     addTableLine(C.TAB.TOPPING
@@ -444,7 +446,7 @@ exports.Report = function (options, callback) {
                 _.forEach(ExpensesItemFiltered, function (expitem, key) {
 
                     if (((key + 1) % 2) == 1) {
-                        addHilight(ROW_CURRENT,C.TAB.EXPENSE, TEXT_SPACE)     
+                        addHilight(ROW_CURRENT, C.TAB.EXPENSE, TEXT_SPACE)
                     }
 
                     addExpensesItems(expitem, key);//--text
@@ -727,7 +729,7 @@ exports.Report = function (options, callback) {
         addTableLine(tab, ROW_CURRENT, tab, ROW_CURRENT + TEXT_SPACE);
     }
 
-    function addHilight(position,tab, row_height) {
+    function addHilight(position, tab, row_height) {
 
         pdfReport.rect(C.TAB.ITEM
             .INDEX, position, (tab.LAST - tab.INDEX), row_height).fill('#f0f0f0');

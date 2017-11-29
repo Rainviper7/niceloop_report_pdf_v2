@@ -7,9 +7,9 @@ const _ = require('lodash'),
     C = require('./constant'),
     utils = require('../utils')
     ;
-    
-    //---------constant
-    var TEXT_SPACE_LOWER = 5,
+
+//---------constant
+var TEXT_SPACE_LOWER = 5,
     TEXT_SPACE_UPPER = 2,
     TEXT_SPACE_UPPER_TIME = 3,
     TEXT_SPACE_UPPER_SMALL = 3,
@@ -41,7 +41,7 @@ var TEXT_padding = {
     ;
 
 // function Report(pathPdf, data, shopname) {
-  exports.Report = function(options, callback) {
+exports.Report = function (options, callback) {
     var _path = options.filePath,
         _data = options.data,
         filename = _path,
@@ -50,7 +50,10 @@ var TEXT_padding = {
         ;
 
     //-----
-    var dailyReport = new pdf({ autoFirstPage: false });
+    var dailyReport = new pdf({
+        autoFirstPage: false,
+        size: "A4"
+    });
 
     dailyReport.addPage(SET_PAGE_LANDSCAPE)
 
@@ -115,8 +118,8 @@ var TEXT_padding = {
 
         NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE);
 
-        utils.addGennerateDate(pdfReport,C.TAB.TABLE_LANDSCAPE,ROW_CURRENT,C.FONT.SIZE.SMALL);
-        
+        utils.addGennerateDate(pdfReport, C.TAB.TABLE_LANDSCAPE, ROW_CURRENT, C.FONT.SIZE.SMALL);
+
         dailyReport.fillColor('black');
 
         NewLine(TEXT_SPACE);
@@ -136,7 +139,7 @@ var TEXT_padding = {
             dailyReport.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL)
                 .text(header_table[index], C.TAB.TABLE_LANDSCAPE[text] + TEXT_padding.left, ROW_CURRENT + 2, {
                     width: C.TAB.TABLE_LANDSCAPE[header_table_pointer[index + 1]]
-                    - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]] + TEXT_padding.right,
+                        - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]] + TEXT_padding.right,
                     align: 'left'
                 })//--fix code
 
@@ -159,7 +162,7 @@ var TEXT_padding = {
 
         NewLine(TEXT_SPACE)
 
-        utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
+        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
 
         //---detail data
 
@@ -174,7 +177,7 @@ var TEXT_padding = {
                 if (hilight) {
                     addHilight(ROW_CURRENT, TEXT_SPACE);
 
-                    utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
+                    utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
                 }
 
 
@@ -206,11 +209,11 @@ var TEXT_padding = {
                     }
 
 
-                    utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
+                    utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
                 }
                 else {
 
-                    utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
+                    utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
 
                 }
 
@@ -220,7 +223,7 @@ var TEXT_padding = {
 
         })
 
-        utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
+        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
         NewLine(TEXT_SPACE)
 
 
@@ -230,9 +233,9 @@ var TEXT_padding = {
 
         //--footer
 
-        utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
+        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
 
-        utils.addGennerateDate(pdfReport,C.TAB.TABLE_LANDSCAPE,ROW_CURRENT,C.FONT.SIZE.SMALL);
+        utils.addGennerateDate(pdfReport, C.TAB.TABLE_LANDSCAPE, ROW_CURRENT, C.FONT.SIZE.SMALL);
 
         dailyReport.fillColor('black');
 
@@ -261,12 +264,12 @@ var TEXT_padding = {
             gtt1 = numberWithCommas2(record.GrandTotal.toFixed(2)),
             record_options = {
                 width: C.TAB.TABLE_LANDSCAPE[header_table_pointer[index + 1]]
-                - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]],
+                    - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]],
                 align: 'left'
             },
             record_options2 = {
                 width: C.TAB.TABLE_LANDSCAPE[header_table_pointer[index + 1]]
-                - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]],
+                    - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]],
                 align: 'right'
             }
             ;

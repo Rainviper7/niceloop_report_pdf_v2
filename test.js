@@ -12,30 +12,32 @@ var params = {},
     prefix_name = "",
     ShopName = "" || "Niceloop Test Lab",
     filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
-    params_default = {
-        filePath: '/tmp/' + filename, //cloud
-        data: {},
-        from: '2017-03-01T15:00:00',
-        to: '2017-03-31T15:00:00',
-        shopname: "" || ShopName,
-        customerId: '4073'
-    };
+params_default = {
+    filePath: '/tmp/' + filename, //cloud
+    data: {},
+    from: '2017-03-01T15:00:00',
+    to: '2017-03-31T15:00:00',
+    shopname: "" || ShopName,
+    customerId: '4073'
+};
 
 //----main---
 // detailbillsPDF();
 // memberPDF();
 // productbydaysPDF();
-
+//  monthyemailPDF();
 
 // --------finish-------
 // salebyemployeePDF();
-
 // dailyemailPDF();
+
 // voidPDF();**
 // billsPDF();
-productPDF();
 // stockPDF();
 // salePDF();
+
+// ------refactor------
+// productPDF();
 
 
 //-------------------
@@ -52,7 +54,7 @@ function dailyemailPDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
         params_default.data = mockdata;
         params = _.assign({}, params_default)
@@ -68,7 +70,7 @@ function voidPDF() {
 
     //--------void--------
     var voidReport = require('./libs/void-pdf/index'),
-     mockdata = require('./libs/void-pdf/mock_data').data
+        mockdata = require('./libs/void-pdf/mock_data').data
         ;
 
     //-----------in dev mode
@@ -80,7 +82,7 @@ function voidPDF() {
 
         params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        params_default.data = mockdata||{};
+        params_default.data = mockdata || {};
         params = _.assign({}, params_default)
 
     }
@@ -95,7 +97,7 @@ function billsPDF() {
     //--------void--------
     var billsReport = require('./libs/bill-pdf/index')
     bills_mockdata = require('./libs/bill-pdf/mock_detail_income')
-    
+
         ;
 
     //-----------in dev mode
@@ -105,9 +107,9 @@ function billsPDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        params_default.data = bills_mockdata||{};
+        params_default.data = bills_mockdata || {};
         params = _.assign({}, params_default)
 
     }
@@ -121,7 +123,7 @@ function detailbillsPDF() {
 
     //--------
     var detailbillsReport = require('./libs/detail_bills_report/index')
-        
+
         ;
 
     //-----------in dev mode
@@ -131,7 +133,7 @@ function detailbillsPDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
         // params_default.data = mockdata||{};
         params = _.assign({}, params_default)
@@ -156,7 +158,7 @@ function memberPDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
         // params_default.data = mockdata||{};
         params = _.assign({}, params_default)
@@ -172,7 +174,7 @@ function orderrangePDF() {
 
     //--------void--------
     var orderrangeReport = require('./libs/order-ontime-range-pdf/index'),
-    mockdata = require('./libs/order-ontime-range-pdf/mock_data')
+        mockdata = require('./libs/order-ontime-range-pdf/mock_data')
         ;
 
     //-----------in dev mode
@@ -182,9 +184,9 @@ function orderrangePDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        params_default.data = mockdata||{};
+        params_default.data = mockdata || {};
         params = _.assign({}, params_default)
 
     }
@@ -207,7 +209,7 @@ function productbydaysPDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
         // params_default.data = mockdata||{};
         params = _.assign({}, params_default)
@@ -229,14 +231,14 @@ function productPDF() {
     //-----------in dev mode
     if (process.env.DEV_MODE == 'true') {
 
-         prefix_name = "product",
+        prefix_name = "product",
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf'
             ;
 
-        params_default.shopname = mockdata.ShopName||"Niceloop Test Lab"
+        params_default.shopname = mockdata.ShopName || "Niceloop Test Lab"
         params_default.filePath = filename
-        params_default.data = mockdata||{};
+        params_default.data = mockdata || {};
         params = _.assign({}, params_default)
 
     }
@@ -250,7 +252,7 @@ function salebyemployeePDF() {
 
     //--------void--------
     var salebyemployeeReport = require('./libs/sale-by-employee-pdf/index'),
-    mockdata = require('./libs/sale-by-employee-pdf/mock_data')
+        mockdata = require('./libs/sale-by-employee-pdf/mock_data')
         ;
 
     //-----------in dev mode
@@ -260,9 +262,9 @@ function salebyemployeePDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        params_default.data = mockdata||{};
+        params_default.data = mockdata || {};
         params = _.assign({}, params_default)
 
     }
@@ -276,7 +278,7 @@ function salePDF() {
 
     //--------void--------
     var saleReport = require('./libs/sale-pdf/index'),
-    mockdata = require("./libs/sale-pdf/mock_data")
+        mockdata = require("./libs/sale-pdf/mock_data")
         ;
 
     //-----------in dev mode
@@ -286,12 +288,12 @@ function salePDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        params_default.data = mockdata||{};
-        params_default.from='2017-05-01T15:00:00',
-        params_default.to= '2017-05-30T15:00:00',
-        params = _.assign({}, params_default)
+        params_default.data = mockdata || {};
+        params_default.from = '2017-05-01T15:00:00',
+            params_default.to = '2017-05-30T15:00:00',
+            params = _.assign({}, params_default)
 
     }
 
@@ -314,9 +316,9 @@ function stockPDF() {
             ShopName = "Niceloop Test Lab",
             filename = './output/' + prefix_name + '_' + ShopName + '_' + datetime + '.pdf';
 
-            params_default.shopname = "Niceloop Test Lab"
+        params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-         params_default.data = mockdata||{};
+        params_default.data = mockdata || {};
         params = _.assign({}, params_default)
 
     }

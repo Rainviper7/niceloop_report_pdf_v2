@@ -32,7 +32,10 @@ exports.Report = function (options, cb) {
         callback = cb
         ;
 
-    var pdfReport = new pdf({ autoFirstPage: false });
+    var pdfReport = new pdf({
+        autoFirstPage: false,
+        size: "A4"
+    });
 
     pdfReport.addPage(C.PAGE_TYPE.LANDSCAPE)
 
@@ -108,7 +111,7 @@ exports.Report = function (options, cb) {
             buildPdf: buildPdf
         } //--cloud
     }
-    
+
     function buildPdf() {
 
         console.log("--Report module, Start...");
@@ -170,9 +173,9 @@ exports.Report = function (options, cb) {
         });
 
         NewLine(TEXT_SPACE)
-        
-        addLineLocal() 
-        
+
+        addLineLocal()
+
         _.forEach(data, function (record, index) {
 
             _.forEach(record, function (detail, index2) {
@@ -187,7 +190,7 @@ exports.Report = function (options, cb) {
 
     function drawFooter() {
 
-        addLineLocal() 
+        addLineLocal()
         utils.addGennerateDate(pdfReport, C.TAB.ITEMS, ROW_CURRENT, C.FONT.SIZE.SMALL);
 
         pdfReport.fillColor('black');
@@ -225,51 +228,51 @@ exports.Report = function (options, cb) {
 
             var detail_bill = {
                 bills: {
-                    amount:utils.numberWithCommas(record.Bills),
-                    position: C.TABLE_LANDSCAPE.ITEM.BILLS+ C.TEXT_PADDING.LEFT
+                    amount: utils.numberWithCommas(record.Bills),
+                    position: C.TABLE_LANDSCAPE.ITEM.BILLS + C.TEXT_PADDING.LEFT
                 },
                 total: {
-                    amount:"-",
-                    position: C.TABLE_LANDSCAPE.ITEM.TOTAL+ C.TEXT_PADDING.LEFT
+                    amount: "-",
+                    position: C.TABLE_LANDSCAPE.ITEM.TOTAL + C.TEXT_PADDING.LEFT
                 },
                 paytype: {
-                    amount:"-",
-                    position: C.TABLE_LANDSCAPE.ITEM.PAYMENTTYPE+ C.TEXT_PADDING.LEFT
+                    amount: "-",
+                    position: C.TABLE_LANDSCAPE.ITEM.PAYMENTTYPE + C.TEXT_PADDING.LEFT
                 },
                 subtotal: {
-                    amount:"-",
-                    position: C.TABLE_LANDSCAPE.ITEM.SUBTOTAL+ C.TEXT_PADDING.LEFT
+                    amount: "-",
+                    position: C.TABLE_LANDSCAPE.ITEM.SUBTOTAL + C.TEXT_PADDING.LEFT
                 },
                 itemdiscount: {
-                    amount:"-",
-                    position: C.TABLE_LANDSCAPE.ITEM.ITEMDISCOUNT+ C.TEXT_PADDING.LEFT
+                    amount: "-",
+                    position: C.TABLE_LANDSCAPE.ITEM.ITEMDISCOUNT + C.TEXT_PADDING.LEFT
                 },
                 service: {
-                    amount:"-",
-                    position: C.TABLE_LANDSCAPE.ITEM.SERVICE+ C.TEXT_PADDING.LEFT
+                    amount: "-",
+                    position: C.TABLE_LANDSCAPE.ITEM.SERVICE + C.TEXT_PADDING.LEFT
                 },
                 discount: {
-                    amount:"-",
-                    position: C.TABLE_LANDSCAPE.ITEM.DISCOUNT+ C.TEXT_PADDING.LEFT
+                    amount: "-",
+                    position: C.TABLE_LANDSCAPE.ITEM.DISCOUNT + C.TEXT_PADDING.LEFT
                 },
                 vat: {
-                    amount:"-",
-                    position: C.TABLE_LANDSCAPE.VAT+ C.TEXT_PADDING.LEFT
+                    amount: "-",
+                    position: C.TABLE_LANDSCAPE.VAT + C.TEXT_PADDING.LEFT
                 }
             };
 
-            _.forEach(detail_bill,function(value,key){
+            _.forEach(detail_bill, function (value, key) {
                 pdfReport.text(value.amount, value.position, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
             })
-           
+
 
             _.forEach(C.TAB.ITEMS, function (tab, key) {
                 addColumnLine(tab);
             });
 
             NewLine(TEXT_SPACE)
-            addLineLocal() 
-           
+            addLineLocal()
+
         }
         else {
 
@@ -301,7 +304,7 @@ exports.Report = function (options, cb) {
                     position: C.TABLE_LANDSCAPE.VAT + C.TEXT_PADDING.LEFT
                 }
             }
-                //--fix code
+            //--fix code
             _.forEach(discount_layout, function (disc_name, key) {
                 if (disc_name.amount == "฿ 0.00" || disc_name.amount == "0.00") {
                     pdfReport.text("-", disc_name.position, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST));
@@ -326,7 +329,7 @@ exports.Report = function (options, cb) {
                     });
                     NewLine(TEXT_SPACE)
                 })
-                addLineLocal() 
+                addLineLocal()
 
             }
 
@@ -336,8 +339,8 @@ exports.Report = function (options, cb) {
                 });
 
                 NewLine(TEXT_SPACE)
-                addLineLocal() 
-               
+                addLineLocal()
+
             }
 
         }

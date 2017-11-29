@@ -29,10 +29,12 @@ exports.Report = function (options, callback) {
         filename = _path,
         data = _data,
         shopname = options.shopname,
-        cb= callback
+        cb = callback
         ;
 
-    var pdfReport = new pdf();
+    var pdfReport = new pdf({
+        size: "A4"
+    });
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss"),
@@ -46,31 +48,31 @@ exports.Report = function (options, callback) {
         },
         time: {
             title: "Time",
-            position: C.TAB.ITEMS.TIME+ C.TEXT_PADDING.LEFT
+            position: C.TAB.ITEMS.TIME + C.TEXT_PADDING.LEFT
         },
         refer: {
             title: "Refer",
-            position: C.TAB.ITEMS.REFER+ C.TEXT_PADDING.LEFT
+            position: C.TAB.ITEMS.REFER + C.TEXT_PADDING.LEFT
         },
         user: {
             title: "ApproveBy",
-            position: C.TAB.ITEMS.USER+ C.TEXT_PADDING.LEFT
+            position: C.TAB.ITEMS.USER + C.TEXT_PADDING.LEFT
         },
         quantity: {
             title: "Qty",
-            position: C.TAB.ITEMS.QUANTITY+ C.TEXT_PADDING.LEFT
+            position: C.TAB.ITEMS.QUANTITY + C.TEXT_PADDING.LEFT
         },
         item: {
             title: "Items",
-            position: C.TAB.ITEMS.ITEM+ C.TEXT_PADDING.LEFT
+            position: C.TAB.ITEMS.ITEM + C.TEXT_PADDING.LEFT
         },
         amount: {
             title: "Price",
-            position: C.TAB.ITEMS.AMOUNT+ C.TEXT_PADDING.LEFT
+            position: C.TAB.ITEMS.AMOUNT + C.TEXT_PADDING.LEFT
         },
         comment: {
             title: "Reason",
-            position: C.TAB.ITEMS.COMMENT+ C.TEXT_PADDING.LEFT
+            position: C.TAB.ITEMS.COMMENT + C.TEXT_PADDING.LEFT
         }
     }
 
@@ -124,14 +126,14 @@ exports.Report = function (options, callback) {
 
     function drawHeader() {
 
-        var header_data =[
-          shopname,report_type
+        var header_data = [
+            shopname, report_type
         ]
             ;
 
         _.forEach(header_data, function (value, index) {
             pdfReport.fontSize(C.FONT.SIZE.HEADER)
-                .text(value, C.TAB.ITEMS.INDEX, ROW_CURRENT, styles_font_left(C.TAB.ITEMS.INDEX,C.TAB.ITEMS.LAST));
+                .text(value, C.TAB.ITEMS.INDEX, ROW_CURRENT, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST));
             NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE_LOWER);
         })
 
@@ -190,7 +192,7 @@ exports.Report = function (options, callback) {
 
         _.forEach(itemgroup, function (item, tab) {
             pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-                .text(item.title, item.position , ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX,C.TAB.ITEMS.LAST));
+                .text(item.title, item.position, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST));
         })
 
         pdfReport.font("font_style_normal");
@@ -202,48 +204,48 @@ exports.Report = function (options, callback) {
             index: {
                 title: index + 1 + ". ",
                 position: C.TAB.ITEMS.INDEX + C.TEXT_PADDING.LEFT,
-                style: styles_font_left( C.TAB.ITEMS.INDEX,C.TAB.ITEMS.TIME)
+                style: styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.TIME)
             },
             time: {
                 title: item.Date + "  " + item.Time,
                 position: C.TAB.ITEMS.TIME + C.TEXT_PADDING.LEFT,
-                style: styles_font_left( C.TAB.ITEMS.TIME,C.TAB.ITEMS.REFER)
+                style: styles_font_left(C.TAB.ITEMS.TIME, C.TAB.ITEMS.REFER)
             },
             refer: {
                 title: item.Refer,
                 position: C.TAB.ITEMS.REFER + C.TEXT_PADDING.LEFT,
-                style: styles_font_left( C.TAB.ITEMS.REFER,C.TAB.ITEMS.USER)
+                style: styles_font_left(C.TAB.ITEMS.REFER, C.TAB.ITEMS.USER)
             },
             user: {
                 title: item.User,
                 position: C.TAB.ITEMS.USER + C.TEXT_PADDING.LEFT,
-                style: styles_font_left( C.TAB.ITEMS.USER,C.TAB.ITEMS.QUANTITY)
+                style: styles_font_left(C.TAB.ITEMS.USER, C.TAB.ITEMS.QUANTITY)
             },
             quantity: {
                 title: item.Qty,
                 position: C.TAB.ITEMS.QUANTITY + C.TEXT_PADDING.LEFT,
-                style: styles_font_left( C.TAB.ITEMS.QUANTITY,C.TAB.ITEMS.ITEM)
+                style: styles_font_left(C.TAB.ITEMS.QUANTITY, C.TAB.ITEMS.ITEM)
             },
             item: {
                 title: item.Item,
                 position: C.TAB.ITEMS.ITEM + C.TEXT_PADDING.LEFT,
-                width:C.TAB.ITEMS.AMOUNT-C.TAB.ITEMS.ITEM,
-                style: styles_font_left(C.TAB.ITEMS.ITEM,C.TAB.ITEMS.AMOUNT )
-                
+                width: C.TAB.ITEMS.AMOUNT - C.TAB.ITEMS.ITEM,
+                style: styles_font_left(C.TAB.ITEMS.ITEM, C.TAB.ITEMS.AMOUNT)
+
             },
             amount: {
                 title: "฿ " + utils.numberWithCommas(item.Amount),
                 position: C.TAB.ITEMS.AMOUNT + C.TEXT_PADDING.RIGHT,
-                style: styles_font_right( C.TAB.ITEMS.AMOUNT,C.TAB.ITEMS.COMMENT)
+                style: styles_font_right(C.TAB.ITEMS.AMOUNT, C.TAB.ITEMS.COMMENT)
             },
             comment: {
                 title: item.Comment,
                 position: C.TAB.ITEMS.COMMENT + C.TEXT_PADDING.LEFT,
-                width:C.TAB.ITEMS.LAST- C.TAB.ITEMS.AMOUNT,
-                style: styles_font_left( C.TAB.ITEMS.AMOUNT,C.TAB.ITEMS.LAST)
+                width: C.TAB.ITEMS.LAST - C.TAB.ITEMS.AMOUNT,
+                style: styles_font_left(C.TAB.ITEMS.AMOUNT, C.TAB.ITEMS.LAST)
             }
         }
-        _.forEach(item_layout, function (text_item,title_name) {
+        _.forEach(item_layout, function (text_item, title_name) {
             pdfReport.fontSize(C.FONT.SIZE.SMALL)
                 .text(text_item.title, text_item.position, ROW_CURRENT + TEXT_SPACE_UPPER, text_item.style)
         })
