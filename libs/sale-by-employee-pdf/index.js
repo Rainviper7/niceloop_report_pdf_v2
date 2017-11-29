@@ -125,28 +125,8 @@ exports.Report = function (options, callback) {
 
 
          summary_result = _.reduce(data.Items, (acc, record) => {
-            if (acc[record.User]) {
-                switch (record.Type) {
-                    case "Food":
-                        acc[record.User].Food.Qty += 1
-                        acc[record.User].Food.Amount += record.Amount
-                        break;
-                    case "Drink":
-                        acc[record.User].Drink.Qty += 1
-                        acc[record.User].Drink.Amount += record.Amount
-                        break;
-                    case "Dessert":
-                        acc[record.User].Dessert.Qty += 1
-                        acc[record.User].Dessert.Amount += record.Amount
-                        break;
-                    case "Other":
-                        acc[record.User].Other.Qty += 1
-                        acc[record.User].Other.Amount += record.Amount
-                        break;
-                }
-
-            }
-            else {
+            
+            if(acc[record.User]  ==  undefined){
                 acc[record.User] = {
                     Food: {
                         Qty: 0,
@@ -165,26 +145,26 @@ exports.Report = function (options, callback) {
                         Amount: 0
                     },
                 }
-                switch (record.Type) {
-                    case "Food":
-                        acc[record.User].Food.Qty += 1
-                        acc[record.User].Food.Amount += record.Amount
-                        break;
-                    case "Drink":
-                        acc[record.User].Drink.Qty += 1
-                        acc[record.User].Drink.Amount += record.Amount
-                        break;
-                    case "Dessert":
-                        acc[record.User].Dessert.Qty += 1
-                        acc[record.User].Dessert.Amount += record.Amount
-                        break;
-                    case "Other":
-                        acc[record.User].Other.Qty += 1
-                        acc[record.User].Other.Amount += record.Amount
-                        break;
-                }
-
             }
+            switch (record.Type) {
+                case "Food":
+                    acc[record.User].Food.Qty += 1
+                    acc[record.User].Food.Amount += record.Amount
+                    break;
+                case "Drink":
+                    acc[record.User].Drink.Qty += 1
+                    acc[record.User].Drink.Amount += record.Amount
+                    break;
+                case "Dessert":
+                    acc[record.User].Dessert.Qty += 1
+                    acc[record.User].Dessert.Amount += record.Amount
+                    break;
+                case "Other":
+                    acc[record.User].Other.Qty += 1
+                    acc[record.User].Other.Amount += record.Amount
+                    break;
+            }
+            
             return acc
         }, {})
 

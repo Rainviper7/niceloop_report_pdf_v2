@@ -4,7 +4,8 @@ const _ = require('lodash'),
     fs = require('fs'),
     moment = require('moment'),
     path = require('path'),
-    C = require('./constant')
+    C = require('./constant'),
+    utils = require('../utils')
     ;
     
     //---------constant
@@ -114,10 +115,8 @@ var TEXT_padding = {
 
         NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE);
 
-        dailyReport.fontSize(C.FONT.SIZE.NORMAL).fillColor('#333333')
-            .text("Generated at : " + datetime
-            , C.TAB.TABLE_LANDSCAPE.INDEX, ROW_CURRENT, SET_HEADER_WIDTH);
-
+        utils.addGennerateDate(pdfReport,C.TAB.TABLE_LANDSCAPE,ROW_CURRENT,C.FONT.SIZE.SMALL);
+        
         dailyReport.fillColor('black');
 
         NewLine(TEXT_SPACE);
@@ -129,10 +128,7 @@ var TEXT_padding = {
 
         NewLine(TEXT_SPACE);
 
-        addTableLine(C.TAB.TABLE_LANDSCAPE
-            .INDEX, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE
-                .LAST, ROW_CURRENT); //row line
-
+        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
 
         //--column title
         _.forEach(header_table_pointer, function (text, index) {
@@ -163,9 +159,7 @@ var TEXT_padding = {
 
         NewLine(TEXT_SPACE)
 
-        addTableLine(C.TAB.TABLE_LANDSCAPE
-            .INDEX, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE
-                .LAST, ROW_CURRENT); //row line
+        utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
 
         //---detail data
 
@@ -180,9 +174,7 @@ var TEXT_padding = {
                 if (hilight) {
                     addHilight(ROW_CURRENT, TEXT_SPACE);
 
-                    addTableLine(C.TAB.TABLE_LANDSCAPE
-                        .INDEX, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE
-                            .LAST, ROW_CURRENT); //row line
+                    utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
                 }
 
 
@@ -214,15 +206,11 @@ var TEXT_padding = {
                     }
 
 
-                    addTableLine(C.TAB.TABLE_LANDSCAPE
-                        .INDEX, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE
-                            .LAST, ROW_CURRENT); //row line
+                    utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
                 }
                 else {
 
-                    addTableLine(C.TAB.TABLE_LANDSCAPE
-                        .INDEX, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE
-                            .LAST, ROW_CURRENT); //row line
+                    utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
 
                 }
 
@@ -232,9 +220,7 @@ var TEXT_padding = {
 
         })
 
-        addTableLine(C.TAB.TABLE_LANDSCAPE
-            .INDEX, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE
-                .LAST, ROW_CURRENT); //row line
+        utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
         NewLine(TEXT_SPACE)
 
 
@@ -244,16 +230,9 @@ var TEXT_padding = {
 
         //--footer
 
-        addTableLine(C.TAB.TABLE_LANDSCAPE
-            .INDEX, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE
-                .LAST, ROW_CURRENT); //row line
+        utils.addTableLine(pdfReport,ROW_CURRENT,C.TAB.TABLE_LANDSCAPE.INDEX,C.TAB.TABLE_LANDSCAPE.LAST)
 
-        dailyReport.fontSize(C.FONT.SIZE.NORMAL).fillColor('#333333')
-            .text("Generated at : " + datetime
-            , C.TAB.TABLE_LANDSCAPE.INDEX, ROW_CURRENT, {
-                width: C.TAB.TABLE_LANDSCAPE.QUANTITY - C.TAB.TABLE_LANDSCAPE.INDEX,
-                align: 'left'
-            });
+        utils.addGennerateDate(pdfReport,C.TAB.TABLE_LANDSCAPE,ROW_CURRENT,C.FONT.SIZE.SMALL);
 
         dailyReport.fillColor('black');
 
@@ -391,15 +370,6 @@ var TEXT_padding = {
 
         }
 
-    }
-
-    function addTableLine(sx, sy, ex, ey) {
-        dailyReport.moveTo(sx, sy).lineTo(ex, ey).lineWidth(line_tick).strokeColor('gray').stroke();
-    }
-
-    function addDashLine(sx, sy, ex, ey) {
-        dailyReport.moveTo(sx, sy).lineTo(ex, ey).lineWidth(line_tick).dash(5, { space: 5 }).strokeColor('gray').strokeOpacity(0.2).stroke().undash();
-        dailyReport.strokeColor('black').strokeOpacity(1).lineWidth(1)
     }
 
     function NewLine(px) {

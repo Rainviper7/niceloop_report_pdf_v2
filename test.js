@@ -31,10 +31,10 @@ var params = {},
 // salebyemployeePDF();
 
 // dailyemailPDF();
-// voidPDF();
+// voidPDF();**
 // billsPDF();
-// productPDF();
-stockPDF();
+productPDF();
+// stockPDF();
 // salePDF();
 
 

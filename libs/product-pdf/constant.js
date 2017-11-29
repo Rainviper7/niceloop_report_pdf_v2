@@ -1,6 +1,4 @@
-
 var FONT = {
-    NAME: 'Arial',
     SIZE: {
         HEADER: 14,
         BIG: 11,
@@ -13,23 +11,12 @@ var FONT = {
 
 //DEFAULT 1(excel4node),50(pdfkit)
 var ROW = {
-    DEFAULT: 50,
-    HEIGHT: 13
-}
-
-var COLUMN = {
-    width: {
-        INDEX: 3,
-        NAME: 21,
-        COUNT: 6,
-        AMOUNT: 15
-    }
-
+    DEFAULT: 50
 }
 
 //----------table_layout
 var TAB = {
-    ITEM: {
+    ITEMS: {
         INDEX: 50,
         NAME: 70,
         QUANTITY: 330,
@@ -43,7 +30,7 @@ var TAB = {
         QUANTITY: 330,
         LAST: 380
     },
-     DELETED: {
+    DELETED: {
         INDEX: 50,
         NAME: 70,
         QUANTITY: 330,
@@ -73,12 +60,12 @@ var TAB = {
     }
 }
 var TAB_TABLE_GROUP = {
-    ITEM: {
-        INDEX: TAB.ITEM.INDEX,
-        QUANTITY: TAB.ITEM.QUANTITY,
-        AMOUNT: TAB.ITEM.AMOUNT,
-        PERCENT: TAB.ITEM.PERCENT,
-        LAST: TAB.ITEM.LAST
+    ITEMS: {
+        INDEX: TAB.ITEMS.INDEX,
+        QUANTITY: TAB.ITEMS.QUANTITY,
+        AMOUNT: TAB.ITEMS.AMOUNT,
+        PERCENT: TAB.ITEMS.PERCENT,
+        LAST: TAB.ITEMS.LAST
     },
     TOPPING: {
         INDEX: TAB.TOPPING.INDEX,
@@ -88,7 +75,7 @@ var TAB_TABLE_GROUP = {
     DELETED: {
         INDEX: TAB.DELETED.INDEX,
         QUANTITY: TAB.DELETED.QUANTITY,
-        AMOUNT: TAB.ITEM.AMOUNT,
+        AMOUNT: TAB.ITEMS.AMOUNT,
         LAST: TAB.DELETED.LAST
     },
     EXPENSE: {
@@ -100,111 +87,32 @@ var TAB_TABLE_GROUP = {
 }
 var TEXT_PADDING = {
     LEFT: 5,
-    RIGHT: -5
+    RIGHT: -5,
+    UP: 1,
+    DOWN: 5
 }
 
 //--HEIGHT portrait 790,landscape 520
 var PAGE_TYPE = {
     HEIGHT: 700,
-    MAGIN: {
+    LANDSCAPE: {
+        autoFirstPage: "false",
+        layout: "landscape",
         margins: 10,
-        top: 10, bottom: 10, left: 50, right: 50
+        top: 10, bottom: 10, left: 50, right: 10
+    },
+    PORTRAIT: {
+        autoFirstPage: "false",
+        layout: "portrait",
+        margins: 10,
+        top: 10, bottom: 10, left: 50, right: 10
     }
 }
 
-var STYLES_FONT = {
-    COLOR: {
-        LIGHT_GRAY: {
-            font: {
-                color: "#a0a0a0"
-            }
-        }
-    },
-    NORMAL: {
-        align: 'left'
-    },
-    HEADER: {
-        width: TAB.ITEM.LAST - TAB.ITEM.INDEX,
-        align: 'left'
-    },
-    CHART: {
-        TITLE: {
-            width: TAB.CHART.AMOUNT - TAB.CHART.INDEX,
-            align: 'left'
-        },
-        AMOUNT: {
-            width: TAB.CHART.LAST - 15 - TAB.CHART.AMOUNT,
-            align: 'right'
-        }
-    },
-    CHART_2: {
-        width: TAB.CHART_2.LAST - TAB.CHART_2.INDEX,
-        align: 'left'
-    },
-    AMOUNT: {
-        width: TAB.ITEM.PERCENT - TAB.ITEM.AMOUNT,
-        align: 'left'
-    },
-    PERCENT: {
-        width: (TAB.ITEM.LAST - TAB.ITEM.PERCENT) + TEXT_PADDING.RIGHT,
-        align: 'right'
-    },
-    DELETED:{
-        align: 'left',
-            strike:"true"
-    },
-
-    HILIGHT: {
-
-    },
-
-    SUM: {
-        font: {
-            name: FONT.NAME,
-            size: FONT.SIZE.BIG,
-            bold: true
-        },
-        fill: { // §18.8.20 fill (Fill)
-            type: "pattern", // Currently only "pattern" is implimented. Non-implimented option is "gradient"
-            patternType: "solid", //§18.18.55 ST_PatternType (Pattern Type)
-            //bgColor: "yellow", // HTML style hex value. optional. defaults to black
-            fgColor: "yellow"
-        }
-    }
-}
-
-
-var STYLES_BORDER = {
-
-    COLUMN: {
-
-    },
-
-    UNDERLINE: {
-
-    },
-
-    UPPERLINE: {
-
-    },
-
-    DOUBLELINE: {
-
-    },
-
-    DASHLINE: {
-
-    }
-
-
-}
 
 exports.FONT = FONT
 exports.ROW = ROW
-exports.COLUMN = COLUMN
 exports.TAB = TAB
-exports.STYLES_FONT = STYLES_FONT
-// exports.STYLES_BORDER = STYLES_BORDER
 exports.TAB_TABLE_GROUP = TAB_TABLE_GROUP
 exports.PAGE_TYPE = PAGE_TYPE
 exports.TEXT_PADDING = TEXT_PADDING
