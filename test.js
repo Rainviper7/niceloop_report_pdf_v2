@@ -27,19 +27,17 @@ params_default = {
 // productbydaysPDF();
 // monthyemailPDF();
 
-// --------finish-------
+// ------wait refactor------
 // salebyemployeePDF();
 // dailyemailPDF();
 
+// --------finish-------
 // voidPDF(); //ทำเส้นตาราง,เหลือทำ ตัดคำขึ้นบรรทัดใหม่
 // billsPDF(); //ทำเลื่อนบรรทัดออโต้ จัดความกว้างคอลัมน์ใหม่
 
-// ------refactor------
 // stockPDF();
 // productPDF();
 // salePDF();
-
-
 //-------------------
 function dailyemailPDF() {
 
