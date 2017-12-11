@@ -21,13 +21,13 @@ var ROW = {
 var TAB = {
     ITEMS: {
         INDEX: 50,
-        TIME:80,
-        REFER:155,
-        USER:190,
-        QUANTITY:250,
-        ITEM:280,
-        AMOUNT:400,
-        COMMENT:460,
+        TIME: 80,
+        REFER: 155,
+        USER: 190,
+        QUANTITY: 250,
+        ITEM: 280,
+        AMOUNT: 400,
+        COMMENT: 460,
         LAST: 550
     },
     TABLE_LANDSCAPE: {
@@ -36,7 +36,7 @@ var TAB = {
     }
 }
 var TAB_TABLE_GROUP = {
-    ITEM: {
+    ITEMS: {
         INDEX: TAB.ITEMS.INDEX,
         TIME: TAB.ITEMS.TIME,
         REFER: TAB.ITEMS.REFER,
@@ -44,58 +44,39 @@ var TAB_TABLE_GROUP = {
         QUANTITY: TAB.ITEMS.QUANTITY,
         ITEM: TAB.ITEMS.ITEM,
         AMOUNT: TAB.ITEMS.AMOUNT,
-        COMMENT:TAB.ITEMS.COMMENT,
-        LAST:TAB.ITEMS.LAST
+        COMMENT: TAB.ITEMS.COMMENT,
+        LAST: TAB.ITEMS.LAST
     },
 }
 var TEXT_PADDING = {
     LEFT: 5,
     RIGHT: -5,
-    UP:2,
-    DOWN:5
+    UP: 2,
+    DOWN: 5
 }
 
 //--HEIGHT portrait 790,landscape 520
 var PAGE_TYPE = {
     HEIGHT: 690,
-    MAGIN: {
+    LANDSCAPE: {
+        size: "A4",
+        autoFirstPage: "false",
+        layout: "landscape",
         margins: 10,
-        top: 10, bottom: 10, left: 50, right: 50
+        top: 10, bottom: 10, left: 50, right: 10
+    },
+    PORTRAIT: {
+        size: "A4",
+        autoFirstPage: "false",
+        layout: "portrait",
+        margins: 10,
+        top: 10, bottom: 10, left: 50, right: 10
     }
 }
-
-// var STYLES_FONT = {
-//     NORMAL: {
-//         align: 'left'
-//     },
-//     ITEM:{
-//         width:TAB.ITEMS.AMOUNT-TAB.ITEMS.ITEM+TEXT_PADDING.RIGHT,
-//         align: 'left'
-//     },
-//     AMOUNT:{
-//         width:TAB.ITEMS.COMMENT-TAB.ITEMS.AMOUNT,
-//         align: 'right'
-//     },
-//     COMMENT:{
-//         width:TAB.ITEMS.LAST-TAB.ITEMS.COMMENT+TEXT_PADDING.RIGHT,
-//         align: 'left'
-//     },
-
-//     HEADER: {
-//         width: TAB.ITEMS.LAST - TAB.ITEMS.INDEX,
-//         align: 'left'
-//     },
-//     HILIGHT: {
-
-//     }
-
-   
-// }
 
 exports.FONT = FONT
 exports.ROW = ROW
 exports.TAB = TAB
-// exports.STYLES_FONT = STYLES_FONT
 exports.TAB_TABLE_GROUP = TAB_TABLE_GROUP
 exports.PAGE_TYPE = PAGE_TYPE
 exports.TEXT_PADDING = TEXT_PADDING

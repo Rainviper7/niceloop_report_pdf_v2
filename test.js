@@ -25,19 +25,19 @@ params_default = {
 // detailbillsPDF();
 // memberPDF();
 // productbydaysPDF();
-//  monthyemailPDF();
+// monthyemailPDF();
 
 // --------finish-------
 // salebyemployeePDF();
 // dailyemailPDF();
 
-// voidPDF();**
-// billsPDF();
-// stockPDF();
-// salePDF();
+// voidPDF(); //ทำเส้นตาราง,เหลือทำ ตัดคำขึ้นบรรทัดใหม่
+// billsPDF(); //ทำเลื่อนบรรทัดออโต้ จัดความกว้างคอลัมน์ใหม่
 
 // ------refactor------
+// stockPDF();
 // productPDF();
+// salePDF();
 
 
 //-------------------

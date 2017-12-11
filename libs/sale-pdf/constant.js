@@ -44,7 +44,7 @@ var TABLE_LANDSCAPE = {
 }
 
 var TAB_TABLE_GROUP = {
-    ITEM: {
+    ITEMS: {
         INDEX: TAB.ITEMS.INDEX,
         BILLS: TAB.ITEMS.BILLS,
         TOTAL: TAB.ITEMS.TOTAL,
@@ -72,32 +72,22 @@ var PAGE_TYPE = {
     LANDSCAPE: {
         autoFirstPage: "false",
         layout: "landscape",
+        size: "A4",
         margins: 10,
         top: 10, bottom: 10, left: 50, right: 10
     },
     PORTRAIT: {
         autoFirstPage: "false",
         layout: "portrait",
+        size: "A4",
         margins: 10,
         top: 10, bottom: 10, left: 50, right: 10
     }
 }
 
-var STYLES_FONT = {
-    NORMAL: {
-        align: 'left'
-    },
-    HEADER: {
-        width: TAB.ITEMS.LAST - TAB.ITEMS.INDEX,
-        align: 'left'
-    }
-}
-
 exports.FONT = FONT
 exports.ROW = ROW
-exports.COLUMN = COLUMN
 exports.TAB = TAB
-exports.STYLES_FONT = STYLES_FONT
 exports.TABLE_LANDSCAPE = TABLE_LANDSCAPE
 exports.TAB_TABLE_GROUP = TAB_TABLE_GROUP
 exports.PAGE_TYPE = PAGE_TYPE

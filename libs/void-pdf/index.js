@@ -32,9 +32,7 @@ exports.Report = function (options, callback) {
         cb = callback
         ;
 
-    var pdfReport = new pdf({
-        size: "A4"
-    });
+    var ReportPdf = new pdf(C.PAGE_TYPE.PORTRAIT);
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss"),
@@ -82,11 +80,11 @@ exports.Report = function (options, callback) {
         fontpath_bold_bath = path.join(__dirname, 'fonts', 'cambriab.ttf')
         ;
 
-    pdfReport.registerFont('font_style_normal', fontpath, '')
+    ReportPdf.registerFont('font_style_normal', fontpath, '')
         .registerFont('font_style_bold', fontpath_bold, '')
         ;
 
-    pdfReport.font('font_style_normal');
+    ReportPdf.font('font_style_normal');
 
     if (process.env.DEV_MODE == 'true') {
 
@@ -114,13 +112,13 @@ exports.Report = function (options, callback) {
     //------------function
     function main() {
 
-        pdfReport.pipe(fs.createWriteStream(filename));
+        ReportPdf.pipe(fs.createWriteStream(filename));
 
-        pdfReport.font('font_style_normal')
+        ReportPdf.font('font_style_normal')
         drawHeader();
         drawBody();
         drawFooter();
-        pdfReport.end();
+        ReportPdf.end();
 
     }
 
@@ -128,74 +126,80 @@ exports.Report = function (options, callback) {
 
         var header_data = [
             shopname, report_type
-        ]
-            ;
+        ];
 
         _.forEach(header_data, function (value, index) {
-            pdfReport.fontSize(C.FONT.SIZE.HEADER)
+            ReportPdf.fontSize(C.FONT.SIZE.HEADER)
                 .text(value, C.TAB.ITEMS.INDEX, ROW_CURRENT, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST));
             NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE_LOWER);
         })
 
         NewLine(TEXT_SPACE_SMALL);
 
-        utils.addGennerateDate(pdfReport, C.TAB.ITEMS, ROW_CURRENT, C.FONT.SIZE.SMALL);
+        utils.addGennerateDate(ReportPdf, C.TAB.ITEMS, ROW_CURRENT, C.FONT.SIZE.SMALL);
 
-        pdfReport.fillColor('black');
+        ReportPdf.fillColor('black');
         NewLine(TEXT_SPACE);
         NewLine(TEXT_SPACE);
     }
 
     function drawBody() {
 
-        addLineLocal()
+        addLineLocal(ReportPdf, C.TAB_TABLE_GROUP.ITEMS)
 
         addItemGroup(text_layout)
 
-        _.forEach(C.TAB_TABLE_GROUP.ITEM, function (value, key) {
-            addColumnLine(value);
-        });
+        _.forEach(C.TAB_TABLE_GROUP.ITEMS, function (tabValue, tabName) {
+            addColumnLine(ReportPdf, tabValue)
+        })
 
         NewLine(TEXT_SPACE)
 
-        addLineLocal()
-
         _.forEach(data.Voids, function (record, index) {
+            //--add hilight item
+            if (((index + 1) % 2) == 1) {
+
+                // utils.addHilight(ReportPdf, C.TAB_TABLE_GROUP.ITEMS, ROW_CURRENT, TEXT_SPACE)
+            }
+
+            addLineLocal(ReportPdf, C.TAB_TABLE_GROUP.ITEMS)
+
             addItems(record, index)
 
-            _.forEach(C.TAB_TABLE_GROUP.ITEM, function (value, key) {
-                addColumnLine(value);
+            _.forEach(C.TAB_TABLE_GROUP.ITEMS, function (tabValue, tabName) {
+                addColumnLine(ReportPdf, tabValue)
             })
+
             NewLine(TEXT_SPACE)
 
-            addLineLocal()
+            addLineLocal(ReportPdf, C.TAB_TABLE_GROUP.ITEMS)
 
         })
 
-        addLineLocal()
+        addLineLocal(ReportPdf, C.TAB_TABLE_GROUP.ITEMS)
 
         NewLine(TEXT_SPACE)
     }
 
     function drawFooter() {
 
-        addLineLocal()
-        utils.addGennerateDate(pdfReport, C.TAB.ITEMS, ROW_CURRENT, C.FONT.SIZE.SMALL);
-        pdfReport.fillColor('black');
+        addLineLocal(ReportPdf, C.TAB.ITEMS)
+        utils.addGennerateDate(ReportPdf, C.TAB.ITEMS, ROW_CURRENT, C.FONT.SIZE.SMALL);
+        ReportPdf.fillColor('black');
 
         NewLine(TEXT_SPACE);
 
     }
 
     function addItemGroup(itemgroup) {
-        pdfReport.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
+        ReportPdf.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
 
         _.forEach(itemgroup, function (item, tab) {
-            pdfReport.fontSize(C.FONT.SIZE.NORMAL)
+            ReportPdf.fontSize(C.FONT.SIZE.NORMAL)
                 .text(item.title, item.position, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST));
         })
 
-        pdfReport.font("font_style_normal");
+        ReportPdf.font("font_style_normal");
     }
 
     function addItems(item, index) {
@@ -224,7 +228,7 @@ exports.Report = function (options, callback) {
             quantity: {
                 title: item.Qty,
                 position: C.TAB.ITEMS.QUANTITY + C.TEXT_PADDING.LEFT,
-                style: styles_font_left(C.TAB.ITEMS.QUANTITY, C.TAB.ITEMS.ITEM)
+                style: styles_font_left(C.TAB.ITEMS.QUANTITY, C.TAB.ITEMS.ITEMS)
             },
             item: {
                 title: item.Item,
@@ -245,28 +249,31 @@ exports.Report = function (options, callback) {
                 style: styles_font_left(C.TAB.ITEMS.AMOUNT, C.TAB.ITEMS.LAST)
             }
         }
+
         _.forEach(item_layout, function (text_item, title_name) {
-            pdfReport.fontSize(C.FONT.SIZE.SMALL)
+            ReportPdf.fontSize(C.FONT.SIZE.SMALL)
                 .text(text_item.title, text_item.position, ROW_CURRENT + TEXT_SPACE_UPPER, text_item.style)
         })
+
         //--dynamic newline 
         // --fix code
         var dynamic_newline_item = false;
         for (var i = 0; i < lineCount(item.Item, item_layout.item.width); i++) {
-            _.forEach(C.TAB.ITEMS
-                , function (value, key) {
-                    addColumnLine(value);
-                })
+
+            _.forEach(C.TAB.ITEMS, function (tabValue, tabName) {
+                addColumnLine(ReportPdf, tabValue)
+            })
+
             dynamic_newline_item = true
             NewLine(TEXT_SPACE)
         }
         //--dynamic newline
         if (dynamic_newline_item) {
             for (var i = 0; i < lineCount(item.Comment, item_layout.comment.width); i++) {
-                _.forEach(C.TAB.ITEMS
-                    , function (value, key) {
-                        addColumnLine(value);
-                    })
+
+                _.forEach(C.TAB.ITEMS, function (tabValue, tabName) {
+                    addColumnLine(ReportPdf, tabValue)
+                })
 
                 NewLine(TEXT_SPACE)
             }
@@ -288,7 +295,7 @@ exports.Report = function (options, callback) {
 
         if (ROW_CURRENT > C.PAGE_TYPE.HEIGHT) {
 
-            pdfReport.addPage(C.PAGE_TYPE.LANDSCAPE);
+            ReportPdf.addPage(C.PAGE_TYPE.PORTRAIT);
             ROW_CURRENT = C.ROW.DEFAULT;
 
             if (isHilight == true) {
@@ -307,14 +314,13 @@ exports.Report = function (options, callback) {
         checkPositionOutsideArea();
     }
 
-    function addColumnLine(tab) {
+    function addColumnLine(pdfReport, tab) {
 
         utils.addTableLine(pdfReport, ROW_CURRENT, tab, tab, ROW_CURRENT, ROW_CURRENT + TEXT_SPACE)
     }
 
-    function addLineLocal() {
-        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST)
-
+    function addLineLocal(pdfReport, tab) {
+        utils.addTableLine(pdfReport, ROW_CURRENT, tab.INDEX, tab.LAST)
     }
 
     function styles_font_left(tab_start, tab_end) {

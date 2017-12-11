@@ -8,39 +8,6 @@ const _ = require('lodash'),
     utils = require('../utils')
     ;
 
-//---------constant
-var TEXT_SPACE_LOWER = 5,
-    TEXT_SPACE_UPPER = 2,
-    TEXT_SPACE_UPPER_TIME = 3,
-    TEXT_SPACE_UPPER_SMALL = 3,
-    TEXT_SPACE = C.FONT.SIZE.NORMAL + TEXT_SPACE_LOWER + 1,//--fix code
-    TEXT_SPACE_NORMAL = C.FONT.SIZE.NORMAL,
-    TEXT_SPACE_SMALL = C.FONT.SIZE.SMALL,
-    ROW_CURRENT = C.ROW.DEFAULT,
-    hilight = false,
-    row_hilight = 0,
-    line_tick = 0.4, //default 0.8
-    report_type = "รายงานบิลการขาย",
-    header_table = ["No.", "OderId", "Date", "Table", "Type", "Shift", "Cashier", "GranTotal", "SubTotal", "ServiceCharge", "Item    Discount", "Discount", "Vat"],
-    header_table_pointer = ["INDEX", "ORDERID", "DATE", "REFER", "TYPE", "SHIFT", "CASHIER", "GRANDTOTAL", "SUBTOTAL", "SERVICE", "ITEMDISCOUNT", "DISCOUNT", "VAT"]//--fixcode
-    ;
-
-//--style
-var TEXT_padding = {
-    left: 5,
-    right: -5
-},
-    SET_PAGE_LANDSCAPE = {
-        layout: "landscape"
-    },//--fixcode
-    SET_HEADER_WIDTH =
-        {
-            width: 500,
-            align: 'left'
-        }//--fixcode
-    ;
-
-// function Report(pathPdf, data, shopname) {
 exports.Report = function (options, callback) {
     var _path = options.filePath,
         _data = options.data,
@@ -49,13 +16,20 @@ exports.Report = function (options, callback) {
         shopname = options.shopname
         ;
 
-    //-----
-    var dailyReport = new pdf({
-        autoFirstPage: false,
-        size: "A4"
-    });
+    //---------constant
+    var TEXT_SPACE = C.FONT.SIZE.NORMAL + C.TEXT_PADDING.DOWN + 1,//--fix code
+        ROW_CURRENT = C.ROW.DEFAULT,
+        hilight = false,
+        row_hilight = 0
+        ;
 
-    dailyReport.addPage(SET_PAGE_LANDSCAPE)
+    var report_type = "รายงานบิลการขาย",
+        header_table = ["No.", "OderId", "Date", "Table", "Type", "Shift", "Cashier", "GranTotal", "SubTotal", "Service Charge", "Item    Discount", "Discount", "Vat"],
+        header_table_pointer = ["INDEX", "ORDERID", "DATE", "REFER", "TYPE", "SHIFT", "CASHIER", "GRANDTOTAL", "SUBTOTAL", "SERVICE", "ITEMDISCOUNT", "DISCOUNT", "VAT"]//--fixcode
+        ;
+
+    //-----
+    var ReportPdf = new pdf(C.PAGE_TYPE.LANDSCAPE);
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss")
@@ -68,19 +42,25 @@ exports.Report = function (options, callback) {
         fontpath_italic = path.join(__dirname, 'fonts', 'ariali.ttf')
         ;
 
-    dailyReport.registerFont('font_style_normal', fontpath, '')
-    dailyReport.registerFont('font_style_bold', fontpath_bold, '')
-    dailyReport.registerFont('font_style_bold_bath', fontpath_bold_bath, '')
-    dailyReport.registerFont('font_style_italic', fontpath_italic, '')
+    ReportPdf.registerFont('font_style_normal', fontpath, '')
+    ReportPdf.registerFont('font_style_bold', fontpath_bold, '')
+    ReportPdf.registerFont('font_style_bold_bath', fontpath_bold_bath, '')
+    ReportPdf.registerFont('font_style_italic', fontpath_italic, '')
 
 
-    dailyReport.font('font_style_bold')//--font_style
-    dailyReport.font('font_style_normal')
+    ReportPdf.font('font_style_bold')//--font_style
+    ReportPdf.font('font_style_normal')
 
-    buildPdf();
-    // return {
-    //     buildPdf: buildPdf 
-    // }//cloud
+    if (process.env.DEV_MODE == 'true') {
+
+        buildPdf();
+    }
+    else {
+
+        return {
+            buildPdf: buildPdf
+        } //--cloud
+    }
 
     function buildPdf() {
 
@@ -96,32 +76,32 @@ exports.Report = function (options, callback) {
     //------------function
     function main() {
 
-        dailyReport.pipe(fs.createWriteStream(filename));
+        ReportPdf.pipe(fs.createWriteStream(filename));
 
-        dailyReport.font('font_style_normal')
+        ReportPdf.font('font_style_normal')
         drawHeader();
         drawBody();
         drawFooter();
-        dailyReport.end();
+        ReportPdf.end();
 
     }
 
     function drawHeader() {
 
-        dailyReport.fontSize(C.FONT.SIZE.HEADER)
-            .text(shopname, C.TAB.TABLE_LANDSCAPE.INDEX, ROW_CURRENT, SET_HEADER_WIDTH);
+        ReportPdf.fontSize(C.FONT.SIZE.HEADER)
+            .text(shopname, C.TAB.TABLE_LANDSCAPE.INDEX, ROW_CURRENT,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST))
+            ;
+        NewLine(C.FONT.SIZE.HEADER + C.TEXT_PADDING.DOWN);
 
-        NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE_LOWER);
-
-        dailyReport.fontSize(C.FONT.SIZE.HEADER)
-            .text(report_type, C.TAB.TABLE_LANDSCAPE.INDEX, ROW_CURRENT, SET_HEADER_WIDTH);
-
+        ReportPdf.fontSize(C.FONT.SIZE.HEADER)
+            .text(report_type, C.TAB.TABLE_LANDSCAPE.INDEX, ROW_CURRENT,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST))
+            ;
         NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE);
+        ReportPdf.fillColor('black');
 
-        utils.addGennerateDate(pdfReport, C.TAB.TABLE_LANDSCAPE, ROW_CURRENT, C.FONT.SIZE.SMALL);
-
-        dailyReport.fillColor('black');
-
+        utils.addGennerateDate(ReportPdf, C.TAB.TABLE_LANDSCAPE, ROW_CURRENT, C.FONT.SIZE.SMALL);
         NewLine(TEXT_SPACE);
 
     }
@@ -131,38 +111,33 @@ exports.Report = function (options, callback) {
 
         NewLine(TEXT_SPACE);
 
-        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
+        addLineLocal(ReportPdf, C.TAB.TABLE_LANDSCAPE)
 
         //--column title
         _.forEach(header_table_pointer, function (text, index) {
 
-            dailyReport.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL)
-                .text(header_table[index], C.TAB.TABLE_LANDSCAPE[text] + TEXT_padding.left, ROW_CURRENT + 2, {
-                    width: C.TAB.TABLE_LANDSCAPE[header_table_pointer[index + 1]]
-                        - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]] + TEXT_padding.right,
-                    align: 'left'
-                })//--fix code
+            ReportPdf.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL)
+                .text(header_table[index], C.TAB.TABLE_LANDSCAPE[text] + C.TEXT_PADDING.LEFT, ROW_CURRENT + 2,
+                styles_font_left(C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]] + C.TEXT_PADDING.RIGHT
+                    , C.TAB.TABLE_LANDSCAPE[header_table_pointer[index + 1]]))
 
         })
 
-        dailyReport.font('font_style_normal')
+        ReportPdf.font('font_style_normal')
 
-
-        _.forEach(C.TAB.TABLE_LANDSCAPE
-            , function (value, key) {
-                addColumnLine(value);
-            })
+        _.forEach(C.TAB.TABLE_LANDSCAPE, function (tabValue, tabName) {
+            addColumnLine(ReportPdf, tabValue)
+        })
 
         NewLine(TEXT_SPACE)
 
-        _.forEach(C.TAB.TABLE_LANDSCAPE
-            , function (value, key) {
-                addColumnLine(value);
-            })
+        _.forEach(C.TAB.TABLE_LANDSCAPE, function (tabValue, tabName) {
+            addColumnLine(ReportPdf, tabValue)
+        })
 
         NewLine(TEXT_SPACE)
 
-        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
+        addLineLocal(ReportPdf, C.TAB.TABLE_LANDSCAPE)
 
         //---detail data
 
@@ -175,72 +150,59 @@ exports.Report = function (options, callback) {
                 }
 
                 if (hilight) {
-                    addHilight(ROW_CURRENT, TEXT_SPACE);
 
-                    utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
+                    utils.addHilight(ReportPdf, C.TAB.TABLE_LANDSCAPE, ROW_CURRENT, TEXT_SPACE)
+
+                    addLineLocal(ReportPdf, C.TAB.TABLE_LANDSCAPE)
                 }
-
 
                 addItem(record1, index1)
 
-
-                _.forEach(C.TAB.TABLE_LANDSCAPE
-                    , function (value, key) {
-                        addColumnLine(value);
-                    })
+                _.forEach(C.TAB.TABLE_LANDSCAPE, function (tabValue, tabName) {
+                    addColumnLine(ReportPdf, tabValue)
+                })
 
                 NewLine(TEXT_SPACE)
 
-                // if (false) {
                 if (record1.Note) {
                     if (hilight) {
-                        addHilight(ROW_CURRENT, TEXT_SPACE * lineCount(record1.Note));
+
+                        utils.addHilight(ReportPdf, C.TAB.TABLE_LANDSCAPE, ROW_CURRENT, TEXT_SPACE * lineCount(record1.Note))
                     }
 
                     addRemark(record1.Note)
 
                     //--dynamic remark newline
                     for (var i = 0; i < lineCount(record1.Note); i++) {
-                        _.forEach(C.TAB.TABLE_LANDSCAPE
-                            , function (value, key) {
-                                addColumnLine(value);
-                            })
+
+                        _.forEach(C.TAB.TABLE_LANDSCAPE, function (tabValue, tabName) {
+                            addColumnLine(ReportPdf, tabValue)
+                        })
                         NewLine(TEXT_SPACE)
                     }
 
-
-                    utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
+                    addLineLocal(ReportPdf, C.TAB.TABLE_LANDSCAPE)
                 }
                 else {
 
-                    utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
-
+                    addLineLocal(ReportPdf, C.TAB.TABLE_LANDSCAPE)
                 }
 
                 hilight = false
-
             })
 
         })
 
-        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
+        addLineLocal(ReportPdf, C.TAB.TABLE_LANDSCAPE)
         NewLine(TEXT_SPACE)
-
-
     }
 
     function drawFooter() {
-
         //--footer
-
-        utils.addTableLine(pdfReport, ROW_CURRENT, C.TAB.TABLE_LANDSCAPE.INDEX, C.TAB.TABLE_LANDSCAPE.LAST)
-
-        utils.addGennerateDate(pdfReport, C.TAB.TABLE_LANDSCAPE, ROW_CURRENT, C.FONT.SIZE.SMALL);
-
-        dailyReport.fillColor('black');
-
+        addLineLocal(ReportPdf, C.TAB.TABLE_LANDSCAPE)
+        utils.addGennerateDate(ReportPdf, C.TAB.TABLE_LANDSCAPE, ROW_CURRENT, C.FONT.SIZE.SMALL);
+        ReportPdf.fillColor('black');
         NewLine(TEXT_SPACE);
-
     }
 
     function lineCount(str) {
@@ -259,102 +221,87 @@ exports.Report = function (options, callback) {
 
     function addItem(record, index) {
 
+        var order_text = "#" + record.OrderId,
+            gtt_text = utils.numberWithCommas(record.GrandTotal.toFixed(2)),
 
-        var t1 = "#" + record.OrderId,
-            gtt1 = numberWithCommas2(record.GrandTotal.toFixed(2)),
-            record_options = {
-                width: C.TAB.TABLE_LANDSCAPE[header_table_pointer[index + 1]]
-                    - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]],
-                align: 'left'
-            },
-            record_options2 = {
-                width: C.TAB.TABLE_LANDSCAPE[header_table_pointer[index + 1]]
-                    - C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]],
-                align: 'right'
+            TAB_RECORD = {
+                LAST: C.TAB.TABLE_LANDSCAPE[header_table_pointer[index + 1]],
+                INDEX: C.TAB.TABLE_LANDSCAPE[header_table_pointer[index]]
             }
             ;
 
-        dailyReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text(record.Id, C.TAB.TABLE_LANDSCAPE.INDEX + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, record_options)
-            .text(t1, C.TAB.TABLE_LANDSCAPE.ORDERID + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, record_options)
+        ReportPdf.fontSize(C.FONT.SIZE.NORMAL)
+            .text(record.Id, C.TAB.TABLE_LANDSCAPE.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(TAB_RECORD.INDEX, TAB_RECORD.LAST))
+            .text(order_text, C.TAB.TABLE_LANDSCAPE.ORDERID + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(TAB_RECORD.INDEX, TAB_RECORD.LAST))
             ;
-        dailyReport.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL).text(moment(record.OrderDate).format("HH:mm:ss "), C.TAB.TABLE_LANDSCAPE.DATE + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER_TIME, {
-            width: C.TAB.TABLE_LANDSCAPE.REFER - C.TAB.TABLE_LANDSCAPE.DATE,
-            align: 'left'
-        })
+        ReportPdf.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL)
+            .text(moment(record.OrderDate).format("HH:mm:ss "), C.TAB.TABLE_LANDSCAPE.DATE + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UPPER_TIME,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.DATE, C.TAB.TABLE_LANDSCAPE.REFER))
             ;
-        dailyReport.font('font_style_normal').fontSize(C.FONT.SIZE.NORMAL)
-            .text("                " + moment(record.OrderDate).format("DD-MM"), C.TAB.TABLE_LANDSCAPE.DATE + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, {
-                width: C.TAB.TABLE_LANDSCAPE.REFER - C.TAB.TABLE_LANDSCAPE.DATE,
-                align: 'left'
-            })
-            .text(record.Table, C.TAB.TABLE_LANDSCAPE.REFER + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, {
-                width: C.TAB.TABLE_LANDSCAPE.REFER - C.TAB.TABLE_LANDSCAPE.DATE,
-                align: 'left'
-            })
+        ReportPdf.font('font_style_normal').fontSize(C.FONT.SIZE.NORMAL)
+            .text("                " + moment(record.OrderDate).format("DD-MM"), C.TAB.TABLE_LANDSCAPE.DATE + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.DATE, C.TAB.TABLE_LANDSCAPE.REFER))
 
-            .text(record.ShiftWork, C.TAB.TABLE_LANDSCAPE.SHIFT + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, record_options)
-            .text(record.User, C.TAB.TABLE_LANDSCAPE.CASHIER + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, record_options)
-            ;
-        dailyReport.font('font_style_bold_bath').fontSize(C.FONT.SIZE.NORMAL).text("฿", C.TAB.TABLE_LANDSCAPE.GRANDTOTAL + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, {
-            width: C.TAB.TABLE_LANDSCAPE.SUBTOTAL - C.TAB.TABLE_LANDSCAPE.GRANDTOTAL,
-            align: 'left'
-        })
-        dailyReport.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL).text("    " + gtt1, C.TAB.TABLE_LANDSCAPE.GRANDTOTAL + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, {
-            width: C.TAB.TABLE_LANDSCAPE.SUBTOTAL - C.TAB.TABLE_LANDSCAPE.GRANDTOTAL,
-            align: 'left'
-        })
-            ;
-        dailyReport.font('font_style_italic').fontSize(C.FONT.SIZE.SMALL).fillColor('#333333')
-            .text(record.SubTotal.toFixed(2), C.TAB.TABLE_LANDSCAPE.SUBTOTAL + TEXT_padding.right, ROW_CURRENT + TEXT_SPACE_UPPER_SMALL, {
-                width: C.TAB.TABLE_LANDSCAPE.SERVICE - C.TAB.TABLE_LANDSCAPE.SUBTOTAL,
-                align: 'right'
-            })
-            .text(record.ServiceCharge, C.TAB.TABLE_LANDSCAPE.SERVICE + TEXT_padding.right, ROW_CURRENT + TEXT_SPACE_UPPER_SMALL, {
-                width: C.TAB.TABLE_LANDSCAPE.ITEMDISCOUNT - C.TAB.TABLE_LANDSCAPE.SERVICE,
-                align: 'right'
-            })
-            .text(record.ItemDiscount.toFixed(2), C.TAB.TABLE_LANDSCAPE.ITEMDISCOUNT + TEXT_padding.right, ROW_CURRENT + TEXT_SPACE_UPPER_SMALL, {
-                width: C.TAB.TABLE_LANDSCAPE.DISCOUNT - C.TAB.TABLE_LANDSCAPE.ITEMDISCOUNT,
-                align: 'right'
-            })
-            .text(record.Discount.toFixed(2), C.TAB.TABLE_LANDSCAPE.DISCOUNT + TEXT_padding.right, ROW_CURRENT + TEXT_SPACE_UPPER_SMALL, {
-                width: C.TAB.TABLE_LANDSCAPE.VAT - C.TAB.TABLE_LANDSCAPE.DISCOUNT,
-                align: 'right'
-            })
-            .text(record.Vat, C.TAB.TABLE_LANDSCAPE.VAT + TEXT_padding.right, ROW_CURRENT + TEXT_SPACE_UPPER_SMALL, {
-                width: C.TAB.TABLE_LANDSCAPE.LAST - C.TAB.TABLE_LANDSCAPE.VAT,
-                align: 'right'
-            })
-            ;
-        dailyReport.font('font_style_normal').fillColor('black');
+            .text(record.Table, C.TAB.TABLE_LANDSCAPE.REFER + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.DATE, C.TAB.TABLE_LANDSCAPE.REFER))
 
-        dailyReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text(record.PaymentType, C.TAB.TABLE_LANDSCAPE.TYPE + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, {
-                width: C.TAB.TABLE_LANDSCAPE.SHIFT - C.TAB.TABLE_LANDSCAPE.TYPE,
-                align: 'left'
-            })
-            ;                    //--dynamic remark newline
+            .text(record.ShiftWork, C.TAB.TABLE_LANDSCAPE.SHIFT + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(TAB_RECORD.INDEX, TAB_RECORD.LAST))
+
+            .text(record.User, C.TAB.TABLE_LANDSCAPE.CASHIER + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(TAB_RECORD.INDEX, TAB_RECORD.LAST))
+            ;
+        ReportPdf.font('font_style_bold_bath').fontSize(C.FONT.SIZE.NORMAL)
+            .text("฿", C.TAB.TABLE_LANDSCAPE.GRANDTOTAL + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.GRANDTOTAL, C.TAB.TABLE_LANDSCAPE.SUBTOTAL))
+
+        ReportPdf.font('font_style_bold').fontSize(C.FONT.SIZE.NORMAL)
+            .text("    " + gtt_text, C.TAB.TABLE_LANDSCAPE.GRANDTOTAL + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.GRANDTOTAL, C.TAB.TABLE_LANDSCAPE.SUBTOTAL))
+            ;
+        ReportPdf.font('font_style_italic').fontSize(C.FONT.SIZE.SMALL).fillColor('#333333')
+            .text(record.SubTotal.toFixed(2), C.TAB.TABLE_LANDSCAPE.SUBTOTAL + C.TEXT_PADDING.RIGHT, ROW_CURRENT + C.TEXT_PADDING.UPPER_SMALL,
+            styles_font_right(C.TAB.TABLE_LANDSCAPE.SUBTOTAL, C.TAB.TABLE_LANDSCAPE.SERVICE))
+
+            .text(record.ServiceCharge, C.TAB.TABLE_LANDSCAPE.SERVICE + C.TEXT_PADDING.RIGHT, ROW_CURRENT + C.TEXT_PADDING.UPPER_SMALL,
+            styles_font_right(C.TAB.TABLE_LANDSCAPE.SERVICE, C.TAB.TABLE_LANDSCAPE.ITEMDISCOUNT))
+
+            .text(record.ItemDiscount.toFixed(2), C.TAB.TABLE_LANDSCAPE.ITEMDISCOUNT + C.TEXT_PADDING.RIGHT, ROW_CURRENT + C.TEXT_PADDING.UPPER_SMALL,
+            styles_font_right(C.TAB.TABLE_LANDSCAPE.ITEMDISCOUNT, C.TAB.TABLE_LANDSCAPE.DISCOUNT))
+
+            .text(record.Discount.toFixed(2), C.TAB.TABLE_LANDSCAPE.DISCOUNT + C.TEXT_PADDING.RIGHT, ROW_CURRENT + C.TEXT_PADDING.UPPER_SMALL,
+            styles_font_right(C.TAB.TABLE_LANDSCAPE.DISCOUNT, C.TAB.TABLE_LANDSCAPE.VAT))
+
+            .text(record.Vat, C.TAB.TABLE_LANDSCAPE.VAT + C.TEXT_PADDING.RIGHT, ROW_CURRENT + C.TEXT_PADDING.UPPER_SMALL,
+            styles_font_right(C.TAB.TABLE_LANDSCAPE.VAT, C.TAB.TABLE_LANDSCAPE.LAST))
+            ;
+
+        ReportPdf.font('font_style_normal').fillColor('black');
+
+        ReportPdf.fontSize(C.FONT.SIZE.NORMAL)
+            .text(record.PaymentType, C.TAB.TABLE_LANDSCAPE.TYPE + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.TYPE, C.TAB.TABLE_LANDSCAPE.SHIFT))
+            ;
+        //--dynamic remark newline
         for (var i = 0; i < lineCount2(record.PaymentType); i++) {
-            _.forEach(C.TAB.TABLE_LANDSCAPE
-                , function (value, key) {
-                    addColumnLine(value);
-                })
+            _.forEach(C.TAB.TABLE_LANDSCAPE, function (tabValue, tabName) {
+                addColumnLine(ReportPdf, tabValue)
+            })
 
-            NewLine(TEXT_SPACE_NORMAL)
+            NewLine(TEXT_SPACE)
         }
 
     }
 
     function addRemark(record) {
         //--fix code
-        dailyReport.font('font_style_normal').fontSize(C.FONT.SIZE.SMALL).fillColor('#333333')
-            .text(record, C.TAB.TABLE_LANDSCAPE.GRANDTOTAL + TEXT_padding.left, ROW_CURRENT + TEXT_SPACE_UPPER, {
-                width: C.TAB.TABLE_LANDSCAPE.LAST - C.TAB.TABLE_LANDSCAPE.GRANDTOTAL,
-                align: 'left'
-            })
+        ReportPdf.font('font_style_normal').fontSize(C.FONT.SIZE.SMALL).fillColor('#333333')
+            .text(record, C.TAB.TABLE_LANDSCAPE.GRANDTOTAL + C.TEXT_PADDING.LEFT, ROW_CURRENT + C.TEXT_PADDING.UP,
+            styles_font_left(C.TAB.TABLE_LANDSCAPE.GRANDTOTAL, C.TAB.TABLE_LANDSCAPE.LAST))
 
-        dailyReport.font('font_style_normal').fillColor('black');
+        ReportPdf.font('font_style_normal').fillColor('black');
 
     }
 
@@ -362,7 +309,7 @@ exports.Report = function (options, callback) {
 
         if (ROW_CURRENT > C.PAGE_TYPE.HEIGHT) {
 
-            dailyReport.addPage(SET_PAGE_LANDSCAPE);
+            ReportPdf.addPage(C.PAGE_TYPE.LANDSCAPE);
             ROW_CURRENT = C.ROW.DEFAULT;
 
             if (hilight == true) {
@@ -375,33 +322,31 @@ exports.Report = function (options, callback) {
 
     }
 
+    function addLineLocal(pdfReport, tab) {
+        utils.addTableLine(pdfReport, ROW_CURRENT, tab.INDEX, tab.LAST)
+    }
+
     function NewLine(px) {
         ROW_CURRENT += px;
         checkPositionOutsideArea()
     }
 
-    function addColumnLine(tab) {
-        addTableLine(tab, ROW_CURRENT, tab, ROW_CURRENT + TEXT_SPACE);
+    function addColumnLine(pdfReport, tab) {
+        utils.addTableLine(pdfReport, ROW_CURRENT, tab, tab, ROW_CURRENT, ROW_CURRENT + TEXT_SPACE)
     }
 
-    function addHilight(position, row_height) {
-
-        dailyReport.rect(C.TAB.TABLE_LANDSCAPE
-            .INDEX, position, (C.TAB.TABLE_LANDSCAPE.LAST - C.TAB.TABLE_LANDSCAPE.INDEX), row_height).fill('#F0F0F0');
-        // '#F0F0F0'
-        // '#ddd'
-        dailyReport.fill('black');
+    function styles_font_left(tab_start, tab_end) {
+        return {
+            width: tab_end - tab_start,
+            align: 'left'
+        }
     }
 
-    function numberWithCommas(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    //--fix code
-    function numberWithCommas2(x) {
-        var parts = x.toString().split(".");
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return parts.join(".");
+    function styles_font_right(tab_start, tab_end) {
+        return {
+            width: tab_end - tab_start,
+            align: 'right'
+        }
     }
 
 }

@@ -4,42 +4,9 @@ const _ = require('lodash'),
     fs = require('fs'),
     moment = require('moment'),
     path = require('path'),
-    C = require('./constant')
+    C = require('./constant'),
+    utils = require('../utils')
     ;
-
-//---------constant
-//---[610,790]
-var TEXT_SPACE_LOWER = 5,
-    TEXT_SPACE_UPPER = 2,
-    TEXT_SPACE = C.FONT.SIZE.NORMAL + TEXT_SPACE_LOWER,
-    TEXT_SPACE_BIG = C.FONT.SIZE.BIG + TEXT_SPACE_LOWER,
-    TEXT_SPACE_SMALL = C.FONT.SIZE.SMALL,
-    ROW_CURRENT = C.ROW.DEFAULT,
-    hilight = false,
-    row_hilight = 0,
-    row_chart_2 = 0,
-    line_tick = 0.4 //default 0.8
-    ;
-
-var title_group = {
-    index: "No.",
-    type: "Type",
-    quantity: "Qty",
-    item: "Product",
-    amount: "Amount",
-},
-    position_tab = {
-        index: C.TAB.ITEM.INDEX,
-        type: C.TAB.ITEM.TYPE,
-        quantity: C.TAB.ITEM.QUANTITY,
-        item: C.TAB.ITEM.ITEM,
-        amount: C.TAB.ITEM.AMOUNT,
-    },
-    summary_result={}
-    ;
-
-
-//--fillter
 
 //----------main---
 exports.Report = function (options, callback) {
@@ -47,10 +14,44 @@ exports.Report = function (options, callback) {
         _data = options.data,
         filename = _path,
         data = _data.data,
-        shopname = options.shopname
+        shopname = options.shopname,
+        cb = callback
         ;
 
-    var pdfReport = new pdf();
+    //---------constant
+    //---[610,790]
+    var TEXT_SPACE_LOWER = 5,
+        TEXT_SPACE_UPPER = 2,
+        TEXT_SPACE = C.FONT.SIZE.NORMAL + TEXT_SPACE_LOWER,
+        TEXT_SPACE_BIG = C.FONT.SIZE.BIG + TEXT_SPACE_LOWER,
+        TEXT_SPACE_SMALL = C.FONT.SIZE.SMALL,
+        ROW_CURRENT = C.ROW.DEFAULT,
+        hilight = false,
+        row_hilight = 0,
+        row_chart_2 = 0,
+        line_tick = 0.4 //default 0.8
+        ;
+
+    var title_group = {
+        index: "No.",
+        type: "Type",
+        quantity: "Qty",
+        item: "Product",
+        amount: "Amount",
+    },
+        position_tab = {
+            index: C.TAB.ITEM.INDEX,
+            type: C.TAB.ITEM.TYPE,
+            quantity: C.TAB.ITEM.QUANTITY,
+            item: C.TAB.ITEM.ITEM,
+            amount: C.TAB.ITEM.AMOUNT,
+        },
+        summary_result = {}
+        ;
+
+    var pdfReport = new pdf({
+        size="A4"
+    });
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss"),
@@ -124,9 +125,9 @@ exports.Report = function (options, callback) {
         NewLine(TEXT_SPACE);
 
 
-         summary_result = _.reduce(data.Items, (acc, record) => {
-            
-            if(acc[record.User]  ==  undefined){
+        summary_result = _.reduce(data.Items, (acc, record) => {
+
+            if (acc[record.User] == undefined) {
                 acc[record.User] = {
                     Food: {
                         Qty: 0,
@@ -164,13 +165,13 @@ exports.Report = function (options, callback) {
                     acc[record.User].Other.Amount += record.Amount
                     break;
             }
-            
+
             return acc
         }, {})
 
         //--summart_chart
         pdfReport.fontSize(C.FONT.SIZE.HEADER)
-            .text("Summary", C.TAB.ITEM.INDEX, ROW_CURRENT, C.STYLES_FONT.HEADER);           
+            .text("Summary", C.TAB.ITEM.INDEX, ROW_CURRENT, C.STYLES_FONT.HEADER);
         NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE);
 
         pdfReport.fontSize(C.FONT.SIZE.NORMAL)
@@ -212,16 +213,16 @@ exports.Report = function (options, callback) {
     function drawBody() {
         //--summart_chart
         pdfReport.fontSize(C.FONT.SIZE.HEADER)
-        .text("Detail", C.TAB.ITEM.INDEX, ROW_CURRENT, C.STYLES_FONT.HEADER);           
-    NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE);
+            .text("Detail", C.TAB.ITEM.INDEX, ROW_CURRENT, C.STYLES_FONT.HEADER);
+        NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE);
 
         addTableLine(C.TAB.ITEM
             .INDEX, ROW_CURRENT, C.TAB.ITEM
                 .LAST, ROW_CURRENT); //--row line
-                
-                let group_user =_.groupBy(data.Items,function(value,key){
-                    return value.User
-                })
+
+        let group_user = _.groupBy(data.Items, function (value, key) {
+            return value.User
+        })
 
         _.forEach(group_user, function (record, user) {
 
@@ -239,28 +240,28 @@ exports.Report = function (options, callback) {
 
             _.forEach(record, function (value2, index) {
 
-                    addItems(value2, index)
+                addItems(value2, index)
 
-                    _.forEach(C.TAB.ITEM, function (value, key) {
-                        addColumnLine(value);
-                    });
-                    addTableLine(C.TAB.ITEM
-                        .INDEX, ROW_CURRENT, C.TAB.ITEM
-                            .LAST, ROW_CURRENT); //--row line
+                _.forEach(C.TAB.ITEM, function (value, key) {
+                    addColumnLine(value);
+                });
+                addTableLine(C.TAB.ITEM
+                    .INDEX, ROW_CURRENT, C.TAB.ITEM
+                        .LAST, ROW_CURRENT); //--row line
 
-                    NewLine(TEXT_SPACE)
-            
+                NewLine(TEXT_SPACE)
+
             })
 
-            var sum_qty=_.sumBy(record,function(value,key){
+            var sum_qty = _.sumBy(record, function (value, key) {
                 return value.Qty
             })
-            var sum_amount=_.sumBy(record,function(value,key){
+            var sum_amount = _.sumBy(record, function (value, key) {
                 return value.Amount
             })
-                addTotalItem(sum_qty, sum_amount) //--fix code
+            addTotalItem(sum_qty, sum_amount) //--fix code
 
-            
+
 
             _.forEach(C.TAB.ITEM, function (value, key) {
 
@@ -342,7 +343,7 @@ exports.Report = function (options, callback) {
     function addItems(item, key) {
 
         pdfReport.font("font_style_normal").fontSize(C.FONT.SIZE.SMALL)
-        pdfReport.text(key+1, C.TAB.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
+        pdfReport.text(key + 1, C.TAB.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
         pdfReport.text(item.Type, C.TAB.ITEM.TYPE + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
         pdfReport.text(item.Name, C.TAB.ITEM.ITEM + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
         pdfReport.text(item.Qty, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)

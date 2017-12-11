@@ -109,7 +109,6 @@ var PAGE_TYPE = {
     }
 }
 
-
 exports.FONT = FONT
 exports.ROW = ROW
 exports.TAB = TAB

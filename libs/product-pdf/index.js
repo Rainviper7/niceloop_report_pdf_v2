@@ -173,7 +173,6 @@ exports.Report = function (options, callback) {
                     })
 
                     addItems(item, index);//--text
-
                     NewLine(TEXT_SPACE);
 
                 }
@@ -191,7 +190,6 @@ exports.Report = function (options, callback) {
                     })
 
                     addItems(item, index);//--text
-
                     NewLine(TEXT_SPACE);
 
                     var subItemFilltered = _.filter(item.SubItems, function (subit1) {

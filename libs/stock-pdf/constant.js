@@ -1,6 +1,5 @@
 
 var FONT = {
-    NAME: '',
     SIZE: {
         HEADER: 14,
         BIG: 11,
@@ -17,28 +16,18 @@ var ROW = {
     HEIGHT: 13
 }
 
-var COLUMN = {
-    width: {
-        INDEX: 3,
-        NAME: 21,
-        COUNT: 6,
-        AMOUNT: 15
-    }
-
-}
-
 //----------table_layout
 var TAB = {
     ITEMS: {
         INDEX: 50,
-        NAME:80,
-        BEGIN:270,
-        ADD:310,
-        SOLD:350,
-        ADJUST:380,
-        WITHDRAW:420,
-        RETURN:470,
-        END:510,
+        NAME: 80,
+        BEGIN: 270,
+        ADD: 310,
+        SOLD: 350,
+        ADJUST: 380,
+        WITHDRAW: 420,
+        RETURN: 470,
+        END: 510,
         LAST: 550
     },
     TABLE_LANDSCAPE: {
@@ -47,91 +36,41 @@ var TAB = {
     }
 }
 var TAB_TABLE_GROUP = {
-    ITEM: {
+    ITEMS: {
         INDEX: TAB.ITEMS.INDEX,
-        LAST:TAB.ITEMS.LAST
+        LAST: TAB.ITEMS.LAST
     },
 }
+
 var TEXT_PADDING = {
     LEFT: 5,
-    RIGHT: -5
+    RIGHT: -5,
+    UP: 2,
+    DOWN: 5
 }
 
 //--HEIGHT portrait 790,landscape 520
 var PAGE_TYPE = {
     HEIGHT: 690,
-    MAGIN: {
+    LANDSCAPE: {
+        autoFirstPage: "false",
+        layout: "landscape",
+        size: "A4",
         margins: 10,
-        top: 10, bottom: 10, left: 50, right: 50
+        top: 10, bottom: 10, left: 50, right: 10
+    },
+    PORTRAIT: {
+        autoFirstPage: "false",
+        layout: "portrait",
+        size: "A4",
+        margins: 10,
+        top: 10, bottom: 10, left: 50, right: 10
     }
-}
-
-var STYLES_FONT = {
-    COLOR: {
-        LIGHT_GRAY: {
-            font: {
-                color: "#a0a0a0"
-            }
-        }
-    },
-    NORMAL: {
-        align: 'left'
-    },
-    HEADER: {
-        width: TAB.ITEMS.LAST - TAB.ITEMS.INDEX,
-        align: 'left'
-    },
-    HILIGHT: {
-
-    },
-
-    SUM: {
-        font: {
-            name: FONT.NAME,
-            size: FONT.SIZE.BIG,
-            bold: true
-        },
-        fill: { // §18.8.20 fill (Fill)
-            type: "pattern", // Currently only "pattern" is implimented. Non-implimented option is "gradient"
-            patternType: "solid", //§18.18.55 ST_PatternType (Pattern Type)
-            //bgColor: "yellow", // HTML style hex value. optional. defaults to black
-            fgColor: "yellow"
-        }
-    }
-}
-
-
-var STYLES_BORDER = {
-
-    COLUMN: {
-
-    },
-
-    UNDERLINE: {
-
-    },
-
-    UPPERLINE: {
-
-    },
-
-    DOUBLELINE: {
-
-    },
-
-    DASHLINE: {
-
-    }
-
-
 }
 
 exports.FONT = FONT
 exports.ROW = ROW
-exports.COLUMN = COLUMN
 exports.TAB = TAB
-exports.STYLES_FONT = STYLES_FONT
-// exports.STYLES_BORDER = STYLES_BORDER
 exports.TAB_TABLE_GROUP = TAB_TABLE_GROUP
 exports.PAGE_TYPE = PAGE_TYPE
 exports.TEXT_PADDING = TEXT_PADDING
