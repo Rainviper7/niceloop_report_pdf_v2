@@ -28,7 +28,7 @@ params_default = {
 // monthyemailPDF();
 
 // ------wait refactor------
-// salebyemployeePDF();
+salebyemployeePDF();
 // dailyemailPDF();
 
 // --------finish-------
