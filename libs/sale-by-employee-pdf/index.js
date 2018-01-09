@@ -47,7 +47,14 @@ exports.Report = function (options, callback) {
             item: C.TAB.ITEMS.ITEM,
             amount: C.TAB.ITEMS.AMOUNT,
         },
-        summary_result = {}
+        summary_result = {},
+        menu_type = ["Food", "Drink", "Dessert", "Other"],
+        summary_tab_list = {
+            Food: C.TAB.SUMMARY_CHART.FOOD,
+            Drink: C.TAB.SUMMARY_CHART.DRINK,
+            Dessert: C.TAB.SUMMARY_CHART.DESSERT,
+            Other: C.TAB.SUMMARY_CHART.OTHER
+        }
         ;
 
     var ReportPdf = new pdf();
@@ -130,46 +137,6 @@ exports.Report = function (options, callback) {
 
 
         summary_result = _.reduce(data.Items, (acc, record) => {
-
-            // if (acc[record.User] == undefined) {
-            //     acc[record.User] = {
-            //         Food: {
-            //             Qty: 0,
-            //             Amount: 0
-            //         },
-            //         Drink: {
-            //             Qty: 0,
-            //             Amount: 0
-            //         },
-            //         Dessert: {
-            //             Qty: 0,
-            //             Amount: 0
-            //         },
-            //         Other: {
-            //             Qty: 0,
-            //             Amount: 0
-            //         },
-            //     }
-            // }
-            // switch (record.Type) {
-            //     case "Food":
-            //         acc[record.User].Food.Qty += 1
-            //         acc[record.User].Food.Amount += record.Amount
-            //         break;
-            //     case "Drink":
-            //         acc[record.User].Drink.Qty += 1
-            //         acc[record.User].Drink.Amount += record.Amount
-            //         break;
-            //     case "Dessert":
-            //         acc[record.User].Dessert.Qty += 1
-            //         acc[record.User].Dessert.Amount += record.Amount
-            //         break;
-            //     case "Other":
-            //         acc[record.User].Other.Qty += 1
-            //         acc[record.User].Other.Amount += record.Amount
-            //         break;
-            // }
-            //--------------------
             if (acc[record.User] == undefined) {
                 acc[record.User] = {};
             }
@@ -186,16 +153,20 @@ exports.Report = function (options, callback) {
             return acc
         }, {})
 
+
         //--summart_chart
         ReportPdf.fontSize(C.FONT.SIZE.HEADER)
             .text("Summary", C.TAB.ITEMS.INDEX, ROW_CURRENT, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST));
         NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE);
 
         ReportPdf.fontSize(C.FONT.SIZE.NORMAL)
-        ReportPdf.text("Food", C.TAB.SUMMARY_CHART.FOOD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        ReportPdf.text("Drink", C.TAB.SUMMARY_CHART.DRINK + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        ReportPdf.text("Dessert", C.TAB.SUMMARY_CHART.DESSERT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        ReportPdf.text("Other", C.TAB.SUMMARY_CHART.OTHER + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+        _.forEach(menu_type, function (type) {
+
+            ReportPdf.text(type,
+                summary_tab_list[type] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER,
+                styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+
+        })
 
         _.forEach(C.TAB.SUMMARY_CHART, function (tabValue, tabName) {
             addColumnLine(ReportPdf, tabValue)
@@ -206,7 +177,23 @@ exports.Report = function (options, callback) {
         NewLine(TEXT_SPACE)
 
         _.forEach(summary_result, (rec, user) => {
-            addSummaryChart(rec, user)
+
+            addEmployeeName(user)
+
+            _.forEach(menu_type, function (menuType) {
+                var sum_employee
+                if (rec[menuType] == undefined) {
+                    sum_employee = {
+                        Amount: 0,
+                        Qty: 0
+                    }
+                }
+                else {
+                    sum_employee = rec[menuType]
+                }
+
+                addSummaryChart(sum_employee, menuType)
+            })
 
             _.forEach(C.TAB.SUMMARY_CHART, function (tabValue, tabName) {
                 addColumnLine(ReportPdf, tabValue)
@@ -303,56 +290,15 @@ exports.Report = function (options, callback) {
         NewLine(TEXT_SPACE);
 
     }
-
-    function addSummaryChart(income, user) {
+    function addEmployeeName(name) {
         ReportPdf.font("font_style_normal").fontSize(C.FONT.SIZE.SMALL)
-        ReportPdf.text(user, C.TAB.SUMMARY_CHART.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        // if (income == undefined) {
-        //     ReportPdf.text("0 (0)",
-        //         C.TAB.SUMMARY_CHART.FOOD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER,
-        //         styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        // }
-        // else {
-        //     ReportPdf.text(utils.numberWithCommas((income["Food"].Amount).toFixed(2)) + " (" + income["Food"].Qty + ")",
-        //         C.TAB.SUMMARY_CHART.FOOD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER,
-        //         styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        // }
-
-        //--fix code
-        var menu_type = ["Food", "Drink", "Dessert", "Other"]
-        var summary_tab_list = {
-            Food: C.TAB.SUMMARY_CHART.FOOD,
-            Drink: C.TAB.SUMMARY_CHART.DRINK,
-            Dessert: C.TAB.SUMMARY_CHART.DESSERT,
-            Other: C.TAB.SUMMARY_CHART.OTHER
-        }
-        _.forEach(menu_type, function (menuType) {
-            _.forEach(income, function (value, index) {
-                var a1 = income[menuType] && utils.numberWithCommas(income[menuType].Amount.toFixed(2))
-                var a2 = a1 || 0
-                var b1 = income[menuType] && utils.numberWithCommas(income[menuType].Qty)
-                var b2 = b1 || 0
-
-                ReportPdf.text(a2 + " (" + b2 + ")",
-                    summary_tab_list[menuType] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER,
-                    styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-            })
-        })
-
-        // ReportPdf.text(utils.numberWithCommas(income["Drink"] && income["Drink"].Amount.toFixed(2)) + " (" + income["Drink"].Qty + ")", C.TAB.SUMMARY_CHART.DRINK + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        // ReportPdf.text(utils.numberWithCommas((income["Dessert"].Amount).toFixed(2)) + " (" + income["Dessert"].Qty + ")", C.TAB.SUMMARY_CHART.DESSERT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        // ReportPdf.text(utils.numberWithCommas((income["Other"].Amount).toFixed(2)) + " (" + income["Other"].Qty + ")", C.TAB.SUMMARY_CHART.OTHER + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-
-        // _.forEach(income, function (value, type) {
-        //     //--fixcode
-        //     var summary_tab_list = {
-        //         Food: C.TAB.SUMMARY_CHART.FOOD,
-        //         Drink: C.TAB.SUMMARY_CHART.DRINK,
-        //         Dessert: C.TAB.SUMMARY_CHART.DESSERT,
-        //         Other: C.TAB.SUMMARY_CHART.OTHER
-        //     }
-        //     ReportPdf.text(utils.numberWithCommas((value.Amount).toFixed(2)) + " (" + value.Qty + ")", summary_tab_list[type] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        // })
+        ReportPdf.text(name, C.TAB.SUMMARY_CHART.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+    }
+    function addSummaryChart(income, type) {
+        ReportPdf.font("font_style_normal").fontSize(C.FONT.SIZE.SMALL)
+        ReportPdf.text(utils.numberWithCommas(income.Amount.toFixed(2)) + " (" + income.Qty + ")",
+            summary_tab_list[type] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER,
+            styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
     }
 
     function addItemGroup(name, itemgroup) {

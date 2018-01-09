@@ -159,7 +159,7 @@ exports.Report = function (options, callback) {
             //--add hilight item
             if (((index + 1) % 2) == 1) {
 
-                // utils.addHilight(ReportPdf, C.TAB_TABLE_GROUP.ITEMS, ROW_CURRENT, TEXT_SPACE)
+                utils.addHilight(ReportPdf, C.TAB_TABLE_GROUP.ITEMS, ROW_CURRENT, TEXT_SPACE)
             }
 
             addLineLocal(ReportPdf, C.TAB_TABLE_GROUP.ITEMS)

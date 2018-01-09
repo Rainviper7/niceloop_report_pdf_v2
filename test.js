@@ -32,10 +32,11 @@ params_default = {
 // dailyemailPDF();
 
 // --------finish-------
-salebyemployeePDF(); //จัดความกว้างคอลัมน์
-// voidPDF(); //ทำเส้นตาราง,เหลือทำ ตัดคำขึ้นบรรทัดใหม่
+
+voidPDF(); //ทำเส้นตาราง,เหลือทำ ตัดคำขึ้นบรรทัดใหม่
 // billsPDF(); //ทำเลื่อนบรรทัดออโต้ จัดความกว้างคอลัมน์ใหม่
 
+// salebyemployeePDF(); 
 // stockPDF();
 // productPDF();
 // salePDF();

@@ -57,7 +57,7 @@ var TEXT_PADDING = {
 
 //--HEIGHT portrait 790,landscape 520
 var PAGE_TYPE = {
-    HEIGHT: 690,
+    HEIGHT: 750,
     LANDSCAPE: {
         size: "A4",
         autoFirstPage: "false",
