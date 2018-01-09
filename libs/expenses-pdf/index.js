@@ -66,7 +66,7 @@ exports.Report = function (options, callback) {
 
         setTimeout(function () {
             callback(filename);
-        }, 600);
+        }, 1500);
 
     }
 
@@ -117,37 +117,37 @@ exports.Report = function (options, callback) {
             amount: "Price",
             reson: "Reason"
         },
-        position_tab={
-            index: C.TAB.ITEM.INDEX,
-            time: C.TAB.ITEM.TIME,
-            refer: C.TAB.ITEM.REFER,
-            user: C.TAB.ITEM.USER,
-            quantity: C.TAB.ITEM.QUANTITY,
-            item: C.TAB.ITEM.ITEM,
-            amount: C.TAB.ITEM.AMOUNT,
-            reson: C.TAB.ITEM.REASON
-        };
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
-                    .LAST, ROW_CURRENT); //--row line
+            position_tab = {
+                index: C.TAB.ITEM.INDEX,
+                time: C.TAB.ITEM.TIME,
+                refer: C.TAB.ITEM.REFER,
+                user: C.TAB.ITEM.USER,
+                quantity: C.TAB.ITEM.QUANTITY,
+                item: C.TAB.ITEM.ITEM,
+                amount: C.TAB.ITEM.AMOUNT,
+                reson: C.TAB.ITEM.REASON
+            };
+        addTableLine(C.TAB.ITEM
+            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                .LAST, ROW_CURRENT); //--row line
 
-            _.forEach(title_group,function(title,tab){
-                pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-                            .text(title,position_tab[tab]+C.TEXT_PADDING.LEFT,ROW_CURRENT+TEXT_SPACE_UPPER,C.STYLES_FONT.NORMAL);
-            })
-            
-            _.forEach(C.TAB.ITEM, function (value, key) {
-                addColumnLine(value);
-            });
+        _.forEach(title_group, function (title, tab) {
+            pdfReport.fontSize(C.FONT.SIZE.NORMAL)
+                .text(title, position_tab[tab] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
+        })
 
-            NewLine(TEXT_SPACE)
+        _.forEach(C.TAB.ITEM, function (value, key) {
+            addColumnLine(value);
+        });
 
-            addTableLine(C.TAB.ITEM
-                .INDEX, ROW_CURRENT, C.TAB.ITEM
-                    .LAST, ROW_CURRENT); //--row line
+        NewLine(TEXT_SPACE)
 
-            NewLine(TEXT_SPACE)
-            NewLine(TEXT_SPACE)
+        addTableLine(C.TAB.ITEM
+            .INDEX, ROW_CURRENT, C.TAB.ITEM
+                .LAST, ROW_CURRENT); //--row line
+
+        NewLine(TEXT_SPACE)
+        NewLine(TEXT_SPACE)
     }
 
     function drawFooter() {
@@ -249,7 +249,7 @@ exports.Report = function (options, callback) {
         addTableLine(tab, ROW_CURRENT, tab, ROW_CURRENT + TEXT_SPACE);
     }
 
-    function addHilight(position,tab, row_height) {
+    function addHilight(position, tab, row_height) {
 
         pdfReport.rect(C.TAB.ITEM
             .INDEX, position, (tab.LAST - tab.INDEX), row_height).fill('#f0f0f0');

@@ -119,7 +119,7 @@ exports.Report = function (options, cb) {
 
         setTimeout(function () {
             cb(filename);
-        }, 600);
+        }, 1500);
 
     }
 

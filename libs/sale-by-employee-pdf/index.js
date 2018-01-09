@@ -34,6 +34,7 @@ exports.Report = function (options, callback) {
     var title_group = {
         index: "No.",
         type: "Type",
+        group: "Group",
         quantity: "Qty",
         item: "Product",
         amount: "Amount",
@@ -41,6 +42,7 @@ exports.Report = function (options, callback) {
         position_tab = {
             index: C.TAB.ITEMS.INDEX,
             type: C.TAB.ITEMS.TYPE,
+            group: C.TAB.ITEMS.GROUP,
             quantity: C.TAB.ITEMS.QUANTITY,
             item: C.TAB.ITEMS.ITEM,
             amount: C.TAB.ITEMS.AMOUNT,
@@ -86,7 +88,7 @@ exports.Report = function (options, callback) {
 
         setTimeout(function () {
             callback(filename);
-        }, 600);
+        }, 1500);
 
     }
 
@@ -129,44 +131,57 @@ exports.Report = function (options, callback) {
 
         summary_result = _.reduce(data.Items, (acc, record) => {
 
+            // if (acc[record.User] == undefined) {
+            //     acc[record.User] = {
+            //         Food: {
+            //             Qty: 0,
+            //             Amount: 0
+            //         },
+            //         Drink: {
+            //             Qty: 0,
+            //             Amount: 0
+            //         },
+            //         Dessert: {
+            //             Qty: 0,
+            //             Amount: 0
+            //         },
+            //         Other: {
+            //             Qty: 0,
+            //             Amount: 0
+            //         },
+            //     }
+            // }
+            // switch (record.Type) {
+            //     case "Food":
+            //         acc[record.User].Food.Qty += 1
+            //         acc[record.User].Food.Amount += record.Amount
+            //         break;
+            //     case "Drink":
+            //         acc[record.User].Drink.Qty += 1
+            //         acc[record.User].Drink.Amount += record.Amount
+            //         break;
+            //     case "Dessert":
+            //         acc[record.User].Dessert.Qty += 1
+            //         acc[record.User].Dessert.Amount += record.Amount
+            //         break;
+            //     case "Other":
+            //         acc[record.User].Other.Qty += 1
+            //         acc[record.User].Other.Amount += record.Amount
+            //         break;
+            // }
+            //--------------------
             if (acc[record.User] == undefined) {
-                acc[record.User] = {
-                    Food: {
-                        Qty: 0,
-                        Amount: 0
-                    },
-                    Drink: {
-                        Qty: 0,
-                        Amount: 0
-                    },
-                    Dessert: {
-                        Qty: 0,
-                        Amount: 0
-                    },
-                    Other: {
-                        Qty: 0,
-                        Amount: 0
-                    },
+                acc[record.User] = {};
+            }
+
+            if (acc[record.User][record.Type] == undefined) {
+                acc[record.User][record.Type] = {
+                    Amount: 0,
+                    Qty: 0
                 }
             }
-            switch (record.Type) {
-                case "Food":
-                    acc[record.User].Food.Qty += 1
-                    acc[record.User].Food.Amount += record.Amount
-                    break;
-                case "Drink":
-                    acc[record.User].Drink.Qty += 1
-                    acc[record.User].Drink.Amount += record.Amount
-                    break;
-                case "Dessert":
-                    acc[record.User].Dessert.Qty += 1
-                    acc[record.User].Dessert.Amount += record.Amount
-                    break;
-                case "Other":
-                    acc[record.User].Other.Qty += 1
-                    acc[record.User].Other.Amount += record.Amount
-                    break;
-            }
+            acc[record.User][record.Type].Qty += 1
+            acc[record.User][record.Type].Amount += record.Amount
 
             return acc
         }, {})
@@ -279,6 +294,7 @@ exports.Report = function (options, callback) {
     function drawFooter() {
 
         addLineLocal(ReportPdf, C.TAB.ITEMS)
+        NewLine(TEXT_SPACE);
 
         utils.addGennerateDate(ReportPdf, C.TAB.ITEMS, ROW_CURRENT)
 
@@ -291,10 +307,52 @@ exports.Report = function (options, callback) {
     function addSummaryChart(income, user) {
         ReportPdf.font("font_style_normal").fontSize(C.FONT.SIZE.SMALL)
         ReportPdf.text(user, C.TAB.SUMMARY_CHART.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        ReportPdf.text(utils.numberWithCommas(income["Food"].Amount.toFixed(2)) + " (" + income["Food"].Qty + ")", C.TAB.SUMMARY_CHART.FOOD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        ReportPdf.text(utils.numberWithCommas(income["Drink"].Amount.toFixed(2)) + " (" + income["Drink"].Qty + ")", C.TAB.SUMMARY_CHART.DRINK + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        ReportPdf.text(utils.numberWithCommas(income["Dessert"].Amount.toFixed(2)) + " (" + income["Dessert"].Qty + ")", C.TAB.SUMMARY_CHART.DESSERT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
-        ReportPdf.text(utils.numberWithCommas(income["Other"].Amount.toFixed(2)) + " (" + income["Other"].Qty + ")", C.TAB.SUMMARY_CHART.OTHER + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+        // if (income == undefined) {
+        //     ReportPdf.text("0 (0)",
+        //         C.TAB.SUMMARY_CHART.FOOD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER,
+        //         styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+        // }
+        // else {
+        //     ReportPdf.text(utils.numberWithCommas((income["Food"].Amount).toFixed(2)) + " (" + income["Food"].Qty + ")",
+        //         C.TAB.SUMMARY_CHART.FOOD + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER,
+        //         styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+        // }
+
+        //--fix code
+        var menu_type = ["Food", "Drink", "Dessert", "Other"]
+        var summary_tab_list = {
+            Food: C.TAB.SUMMARY_CHART.FOOD,
+            Drink: C.TAB.SUMMARY_CHART.DRINK,
+            Dessert: C.TAB.SUMMARY_CHART.DESSERT,
+            Other: C.TAB.SUMMARY_CHART.OTHER
+        }
+        _.forEach(menu_type, function (menuType) {
+            _.forEach(income, function (value, index) {
+                var a1 = income[menuType] && utils.numberWithCommas(income[menuType].Amount.toFixed(2))
+                var a2 = a1 || 0
+                var b1 = income[menuType] && utils.numberWithCommas(income[menuType].Qty)
+                var b2 = b1 || 0
+
+                ReportPdf.text(a2 + " (" + b2 + ")",
+                    summary_tab_list[menuType] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER,
+                    styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            })
+        })
+
+        // ReportPdf.text(utils.numberWithCommas(income["Drink"] && income["Drink"].Amount.toFixed(2)) + " (" + income["Drink"].Qty + ")", C.TAB.SUMMARY_CHART.DRINK + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+        // ReportPdf.text(utils.numberWithCommas((income["Dessert"].Amount).toFixed(2)) + " (" + income["Dessert"].Qty + ")", C.TAB.SUMMARY_CHART.DESSERT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+        // ReportPdf.text(utils.numberWithCommas((income["Other"].Amount).toFixed(2)) + " (" + income["Other"].Qty + ")", C.TAB.SUMMARY_CHART.OTHER + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+
+        // _.forEach(income, function (value, type) {
+        //     //--fixcode
+        //     var summary_tab_list = {
+        //         Food: C.TAB.SUMMARY_CHART.FOOD,
+        //         Drink: C.TAB.SUMMARY_CHART.DRINK,
+        //         Dessert: C.TAB.SUMMARY_CHART.DESSERT,
+        //         Other: C.TAB.SUMMARY_CHART.OTHER
+        //     }
+        //     ReportPdf.text(utils.numberWithCommas((value.Amount).toFixed(2)) + " (" + value.Qty + ")", summary_tab_list[type] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+        // })
     }
 
     function addItemGroup(name, itemgroup) {
@@ -324,6 +382,7 @@ exports.Report = function (options, callback) {
         ReportPdf.font("font_style_normal").fontSize(C.FONT.SIZE.SMALL)
         ReportPdf.text(key + 1, C.TAB.ITEMS.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
         ReportPdf.text(item.Type, C.TAB.ITEMS.TYPE + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+        ReportPdf.text(item.Group, C.TAB.ITEMS.GROUP + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
         ReportPdf.text(item.Name, C.TAB.ITEMS.ITEM + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
         ReportPdf.text(item.Qty, C.TAB.ITEMS.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
         ReportPdf.text("฿ " + utils.numberWithCommas(item.Amount.toFixed(2)), C.TAB.ITEMS.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))

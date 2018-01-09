@@ -20,10 +20,11 @@ var TAB = {
     ITEMS: {
         INDEX: 50,
         TYPE: 80,
-        ITEM: 150,
-        QUANTITY: 300,
-        AMOUNT: 400,
-        LAST: 550
+        GROUP: 150,
+        ITEM: 230,
+        QUANTITY: 320,
+        AMOUNT: 370,
+        LAST: 460
     },
     SUMMARY_CHART: {
         INDEX: 50,
@@ -32,10 +33,6 @@ var TAB = {
         DESSERT: 300,
         OTHER: 400,
         LAST: 500
-    },
-    TABLE_LANDSCAPE: {
-        INDEX: 50,
-        LAST: 740
     }
 }
 var TAB_TABLE_GROUP = {

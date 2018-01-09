@@ -1,6 +1,5 @@
 
 var FONT = {
-    NAME: 'Arial',
     SIZE: {
         HEADER: 14,
         BIG: 11,

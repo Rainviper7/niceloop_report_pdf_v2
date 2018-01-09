@@ -8,31 +8,6 @@ const _ = require('lodash'),
     ;
 
 //---------constant
-//---[610,790]
-var TEXT_SPACE_LOWER = 5,
-    TEXT_SPACE_UPPER = 2,
-    TEXT_SPACE = C.FONT.SIZE.NORMAL + TEXT_SPACE_LOWER,
-    TEXT_SPACE_BIG = C.FONT.SIZE.BIG + TEXT_SPACE_LOWER,
-    TEXT_SPACE_SMALL = C.FONT.SIZE.SMALL,
-    ROW_CURRENT = C.ROW.DEFAULT,
-    hilight = false,
-    row_hilight = 0,
-    row_chart_2 = 0,
-    line_tick = 0.4 //default 0.8
-    ;
-
-//--fillter
-var CatalogFiltered,
-    itemfillter,
-    subitemfillter,
-    ToppingGroupsFiltered,
-    ToppingItemsFiltered,
-    DeleteGroupsFiltered,
-    DeleteItemFiltered,
-    ExpensesGroupFiltered,
-    ExpensesItemFiltered,
-    footerGrandtotal
-    ;
 
 //----------main---
 exports.Report = function (options, callback) {
@@ -41,6 +16,31 @@ exports.Report = function (options, callback) {
         filename = _path,
         data = _data,
         shopname = options.shopname
+        ;
+    //---[610,790]
+    var TEXT_SPACE_LOWER = 5,
+        TEXT_SPACE_UPPER = 2,
+        TEXT_SPACE = C.FONT.SIZE.NORMAL + TEXT_SPACE_LOWER,
+        TEXT_SPACE_BIG = C.FONT.SIZE.BIG + TEXT_SPACE_LOWER,
+        TEXT_SPACE_SMALL = C.FONT.SIZE.SMALL,
+        ROW_CURRENT = C.ROW.DEFAULT,
+        hilight = false,
+        row_hilight = 0,
+        row_chart_2 = 0,
+        line_tick = 0.4 //default 0.8
+        ;
+
+    //--fillter
+    var CatalogFiltered,
+        itemfillter,
+        subitemfillter,
+        ToppingGroupsFiltered,
+        ToppingItemsFiltered,
+        DeleteGroupsFiltered,
+        DeleteItemFiltered,
+        ExpensesGroupFiltered,
+        ExpensesItemFiltered,
+        footerGrandtotal
         ;
 
     var pdfReport = new pdf({
@@ -79,7 +79,7 @@ exports.Report = function (options, callback) {
 
         setTimeout(function () {
             callback(filename);
-        }, 600);
+        }, 1500);
 
     }
 

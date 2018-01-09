@@ -70,7 +70,7 @@ exports.Report = function (options, callback) {
 
         setTimeout(function () {
             callback(filename);
-        }, 600);
+        }, 1500);
     }
 
     //------------function
