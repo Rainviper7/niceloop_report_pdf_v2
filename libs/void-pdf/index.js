@@ -258,7 +258,7 @@ exports.Report = function (options, callback) {
         //--dynamic newline 
         // --fix code
         var dynamic_newline_item = false;
-        for (var i = 0; i < lineCount(item.Item, item_layout.item.width); i++) {
+        for (var i = 0; i < lineCount(item.Item, item_layout.item.width + C.TEXT_PADDING.RIGHT); i++) {
 
             _.forEach(C.TAB.ITEMS, function (tabValue, tabName) {
                 addColumnLine(ReportPdf, tabValue)
@@ -269,7 +269,7 @@ exports.Report = function (options, callback) {
         }
         //--dynamic newline
         if (dynamic_newline_item) {
-            for (var i = 0; i < lineCount(item.Comment, item_layout.comment.width); i++) {
+            for (var i = 0; i < lineCount(item.Comment, item_layout.comment.width + C.TEXT_PADDING.RIGHT); i++) {
 
                 _.forEach(C.TAB.ITEMS, function (tabValue, tabName) {
                     addColumnLine(ReportPdf, tabValue)
@@ -325,7 +325,7 @@ exports.Report = function (options, callback) {
 
     function styles_font_left(tab_start, tab_end) {
         return {
-            width: tab_end - tab_start,
+            width: tab_end + C.TEXT_PADDING.RIGHT - tab_start,
             align: 'left'
         }
     }
