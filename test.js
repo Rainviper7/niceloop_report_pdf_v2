@@ -23,19 +23,16 @@ params_default = {
 
 //----main---
 // detailbillsPDF();
-// memberPDF();
 // productbydaysPDF();
 // monthyemailPDF();
 
 // ------wait refactor------
-
-// dailyemailPDF();
+// memberPDF();
+dailyemailPDF();
 
 // --------finish-------
-
-voidPDF(); //ทำเส้นตาราง,เหลือทำ ตัดคำขึ้นบรรทัดใหม่
 // billsPDF(); //ทำเลื่อนบรรทัดออโต้ จัดความกว้างคอลัมน์ใหม่
-
+// voidPDF(); // ทำไฮไลตบรรทัด แก้การคัดคำ
 // salebyemployeePDF(); 
 // stockPDF();
 // productPDF();
@@ -44,8 +41,8 @@ voidPDF(); //ทำเส้นตาราง,เหลือทำ ตัด�
 function dailyemailPDF() {
 
     //--------dailyEmail--------
-    var mockdata = require('./libs/daily_email_report/mock_data').data,
-        dailyEmailPdf = require('./libs/daily_email_report/index')
+    var mockdata = require('./libs/daily-email-pdf/mock_data').data,
+        dailyEmailPdf = require('./libs/daily-email-pdf/index')
         ;
 
     //-----------in dev mode

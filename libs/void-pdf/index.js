@@ -156,11 +156,6 @@ exports.Report = function (options, callback) {
         NewLine(TEXT_SPACE)
 
         _.forEach(data.Voids, function (record, index) {
-            //--add hilight item
-            if (((index + 1) % 2) == 1) {
-
-                utils.addHilight(ReportPdf, C.TAB_TABLE_GROUP.ITEMS, ROW_CURRENT, TEXT_SPACE)
-            }
 
             addLineLocal(ReportPdf, C.TAB_TABLE_GROUP.ITEMS)
 
@@ -248,6 +243,11 @@ exports.Report = function (options, callback) {
                 width: C.TAB.ITEMS.LAST - C.TAB.ITEMS.AMOUNT,
                 style: styles_font_left(C.TAB.ITEMS.AMOUNT, C.TAB.ITEMS.LAST)
             }
+        }
+        //--add hilight item
+        if (((index + 1) % 2) == 1) {
+
+            utils.addHilight(ReportPdf, C.TAB_TABLE_GROUP.ITEMS, ROW_CURRENT, TEXT_SPACE)
         }
 
         _.forEach(item_layout, function (text_item, title_name) {
