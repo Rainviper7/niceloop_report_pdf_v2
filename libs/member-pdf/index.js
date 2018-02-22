@@ -4,7 +4,8 @@ const _ = require('lodash'),
     fs = require('fs'),
     moment = require('moment'),
     path = require('path'),
-    C = require('./constant')
+    C = require('./constant'),
+    utils = require('../utils')
     ;
 
 //---------constant
@@ -30,33 +31,41 @@ exports.Report = function (options, callback) {
         _data = options.data,
         filename = _path,
         data = _data,
-        shopname = options.shopname
+        shopname = options.shopname,
+        cb = callback
         ;
 
-    var pdfReport = new pdf();
+    var ReportPdf = new pdf({
+        size: "A4"
+    });
 
     var now = new Date(),
         datetime = moment(now).format("DD MMMM YYYY, HH:mm:ss"),
-        report_type = "รายงานสมาชิก"
+        report_type = "รายงานลูกค้าสมาชิก"
         ;
 
     //----set font
-    var fontpath = path.join(__dirname, 'fonts', 'ARIALUNI.ttf'),
+    var fontpath = path.join(__dirname, 'fonts', 'droidsansth.ttf'),
         fontpath_bold = path.join(__dirname, 'fonts', 'arialbd.ttf'),
         fontpath_bold_bath = path.join(__dirname, 'fonts', 'cambriab.ttf')
         ;
 
-    pdfReport.registerFont('font_style_normal', fontpath, '')
+    ReportPdf.registerFont('font_style_normal', fontpath, '')
         .registerFont('font_style_bold', fontpath_bold, '')
         ;
 
-    pdfReport.font('font_style_normal');
+    ReportPdf.font('font_style_normal');
 
-    buildPdf();
+    if (process.env.DEV_MODE == 'true') {
 
-    // return {
-    //     buildPdf: buildPdf
-    // } //--cloud
+        buildPdf();
+    }
+    else {
+
+        return {
+            buildPdf: buildPdf
+        } //--cloud
+    }
 
     function buildPdf() {
 
@@ -73,13 +82,13 @@ exports.Report = function (options, callback) {
     //------------function
     function main() {
 
-        pdfReport.pipe(fs.createWriteStream(filename));
+        ReportPdf.pipe(fs.createWriteStream(filename));
 
-        pdfReport.font('font_style_normal')
+        ReportPdf.font('font_style_normal')
         drawHeader();
         drawBody();
         drawFooter();
-        pdfReport.end();
+        ReportPdf.end();
 
     }
 
@@ -92,133 +101,128 @@ exports.Report = function (options, callback) {
             ;
 
         _.forEach(header_data, function (value, index) {
-            pdfReport.fontSize(C.FONT.SIZE.HEADER)
-                .text(value, C.TAB.ITEM.INDEX, ROW_CURRENT, C.STYLES_FONT.HEADER);
+            ReportPdf.fontSize(C.FONT.SIZE.HEADER)
+                .text(value, C.TAB.ITEMS.INDEX, ROW_CURRENT, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.TEL));
             NewLine(C.FONT.SIZE.HEADER + TEXT_SPACE_LOWER);
         })
 
         NewLine(TEXT_SPACE_SMALL);
 
-        addGennerateDate()
+        utils.addGennerateDate(ReportPdf, C.TAB.ITEMS, ROW_CURRENT, C.FONT.SIZE.SMALL);
 
-        pdfReport.fillColor('black');
+        ReportPdf.fillColor('black');
         NewLine(TEXT_SPACE);
         NewLine(TEXT_SPACE);
     }
 
     function drawBody() {
-        var title_group = {
+        var title_member = {
             index: "No.",
-            time: "Time",
-            refer: "Refer",
-            user: "ApproveBy",
-            quantity: "Qty",
-            item: "Items",
-            amount: "Price",
-            reson: "Reason"
+            customerid: "customer_ID",
+            firstname: "Firstname",
+            lastname: "Lastname",
+            tel: "Tel.",
+            gender: "Gender",
+            birthday: "Birthday"
         },
             position_tab = {
-                index: C.TAB.ITEM.INDEX,
-                time: C.TAB.ITEM.TIME,
-                refer: C.TAB.ITEM.REFER,
-                user: C.TAB.ITEM.USER,
-                quantity: C.TAB.ITEM.QUANTITY,
-                item: C.TAB.ITEM.ITEM,
-                amount: C.TAB.ITEM.AMOUNT,
-                reson: C.TAB.ITEM.REASON
+                index: C.TAB.ITEMS.INDEX,
+                customerid: C.TAB.ITEMS.CUSTOMERID,
+                firstname: C.TAB.ITEMS.FIRSTNAME,
+                lastname: C.TAB.ITEMS.LASTNAME,
+                tel: C.TAB.ITEMS.TEL,
+                gender: C.TAB.ITEMS.GENDER,
+                birthday: C.TAB.ITEMS.BIRTHDAY
             };
-        addTableLine(C.TAB.ITEM
-            .INDEX, ROW_CURRENT, C.TAB.ITEM
-                .LAST, ROW_CURRENT); //--row line
 
-        _.forEach(title_group, function (title, tab) {
-            pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-                .text(title, position_tab[tab] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
+        addLineLocal(ReportPdf, C.TAB.ITEMS); //--row line
+
+        _.forEach(title_member, function (title, tab) {
+            ReportPdf.fontSize(C.FONT.SIZE.NORMAL)
+                .text(title, position_tab[tab] + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST));
         })
 
-        _.forEach(C.TAB.ITEM, function (value, key) {
-            addColumnLine(value);
-        });
+        _.forEach(C.TAB.ITEMS, function (tabValue, tabName) {
+            addColumnLine(ReportPdf, tabValue)
+        })
 
         NewLine(TEXT_SPACE)
+        addLineLocal(ReportPdf, C.TAB.ITEMS); //--row line
 
-        addTableLine(C.TAB.ITEM
-            .INDEX, ROW_CURRENT, C.TAB.ITEM
-                .LAST, ROW_CURRENT); //--row line
 
-        NewLine(TEXT_SPACE)
+        _.forEach(data.Member, function (member, index) {
+            addItems(member, index);
+
+            _.forEach(C.TAB.ITEMS, function (tabValue, tabName) {
+                addColumnLine(ReportPdf, tabValue)
+            })
+
+            NewLine(TEXT_SPACE)
+            addLineLocal(ReportPdf, C.TAB.ITEMS); //--row line
+        })
+
         NewLine(TEXT_SPACE)
     }
 
     function drawFooter() {
 
-        addTableLine(C.TAB.ITEM
-            .INDEX, ROW_CURRENT, C.TAB.ITEM
-                .LAST, ROW_CURRENT); //--row line
+        addLineLocal(ReportPdf, C.TAB.ITEMS); //--row line
 
-        addGennerateDate();
+        utils.addGennerateDate(ReportPdf, C.TAB.ITEMS, ROW_CURRENT, C.FONT.SIZE.SMALL);
 
-        pdfReport.fillColor('black');
+        ReportPdf.fillColor('black');
 
         NewLine(TEXT_SPACE);
 
-    }
-
-    function addGennerateDate() {
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL).fillColor('#333333')
-            .text("Generated at : " + datetime
-            , C.TAB.ITEM.INDEX, ROW_CURRENT, {
-                width: C.TAB.ITEM.LAST - C.TAB.ITEM.INDEX,
-                align: 'left'
-            });
     }
 
     function addItemGroup(itemgroup) {
-        pdfReport.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
-            .text("Qty", C.TAB_TABLE_GROUP.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("Total", C.TAB_TABLE_GROUP.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("Percent", C.TAB_TABLE_GROUP.ITEM.PERCENT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL);
-        pdfReport.font("font_style_normal");
+        ReportPdf.font("font_style_bold").fontSize(C.FONT.SIZE.NORMAL)
+            .text("Qty", C.TAB_TABLE_GROUP.ITEMS.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text("Total", C.TAB_TABLE_GROUP.ITEMS.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text("Percent", C.TAB_TABLE_GROUP.ITEMS.PERCENT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST));
+        ReportPdf.font("font_style_normal");
         NewLine(TEXT_SPACE);
 
-        _.forEach(C.TAB_TABLE_GROUP.ITEM, function (value, key) {
-            addColumnLine(value);
-        });
+        _.forEach(C.TAB_TABLE_GROUP.ITEMS, function (tabValue, tabName) {
+            addColumnLine(ReportPdf, tabValue)
+        })
 
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text(itemgroup.Name, C.TAB_TABLE_GROUP.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(itemgroup.Quantity, C.TAB_TABLE_GROUP.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(itemgroup.Amount.toFixed(2)), C.TAB_TABLE_GROUP.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text(itemgroup.Percent + "%", C.TAB_TABLE_GROUP.ITEM.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT);
+        ReportPdf.fontSize(C.FONT.SIZE.NORMAL)
+            .text(itemgroup.Name, C.TAB_TABLE_GROUP.ITEMS.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text(itemgroup.Quantity, C.TAB_TABLE_GROUP.ITEMS.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text("฿ " + numberWithCommas(itemgroup.Amount.toFixed(2)), C.TAB_TABLE_GROUP.ITEMS.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
+            .text(itemgroup.Percent + "%", C.TAB_TABLE_GROUP.ITEMS.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT);
 
     }
 
     function addItems(item, key) {
 
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text(key + 1 + ". ", C.TAB.ITEM.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Name, C.TAB.ITEM.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(item.Quantity, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(item.Amount.toFixed(2)), C.TAB.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
-            .text(item.Percent + "%", C.TAB.ITEM.PERCENT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.PERCENT)
+        ReportPdf.fontSize(C.FONT.SIZE.NORMAL)
+            .text(key + 1 + ". ", C.TAB.ITEMS.INDEX + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text(item.CustomerId, C.TAB.ITEMS.CUSTOMERID + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text(item.FirstName, C.TAB.ITEMS.FIRSTNAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text(item.LastName, C.TAB.ITEMS.LASTNAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text(item.Tel, C.TAB.ITEMS.TEL + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text(item.Gender, C.TAB.ITEMS.GENDER + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text(item.BirthDay, C.TAB.ITEMS.BIRTHDAY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
             ;
     }
 
     function addSubItems(subitem) {
 
-        pdfReport.fontSize(C.FONT.SIZE.NORMAL)
-            .text("- " + subitem.Name, C.TAB.ITEM.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text(subitem.Quantity, C.TAB.ITEM.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.NORMAL)
-            .text("฿ " + numberWithCommas(subitem.Amount.toFixed(2)), C.TAB.ITEM.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
+        ReportPdf.fontSize(C.FONT.SIZE.NORMAL)
+            .text("- " + subitem.Name, C.TAB.ITEMS.NAME + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text(subitem.Quantity, C.TAB.ITEMS.QUANTITY + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, styles_font_left(C.TAB.ITEMS.INDEX, C.TAB.ITEMS.LAST))
+            .text("฿ " + numberWithCommas(subitem.Amount.toFixed(2)), C.TAB.ITEMS.AMOUNT + C.TEXT_PADDING.LEFT, ROW_CURRENT + TEXT_SPACE_UPPER, C.STYLES_FONT.AMOUNT)
             ;
     }
-
 
     function checkPositionOutsideArea() {
 
         if (ROW_CURRENT > C.PAGE_TYPE.HEIGHT) {
 
-            pdfReport.addPage();
+            ReportPdf.addPage({ autoFirstPage: false });
             ROW_CURRENT = C.ROW.DEFAULT;
 
             if (hilight == true) {
@@ -231,40 +235,32 @@ exports.Report = function (options, callback) {
 
     }
 
-    function addTableLine(sx, sy, ex, ey) {
-        pdfReport.moveTo(sx, sy).lineTo(ex, ey).lineWidth(line_tick).strokeColor('gray').stroke();
-    }
-
-    function addDashLine(sx, sy, ex, ey) {
-        pdfReport.moveTo(sx, sy).lineTo(ex, ey).lineWidth(line_tick).dash(5, { space: 5 }).strokeColor('drakgray').strokeOpacity(0.2).stroke().undash();
-        pdfReport.strokeColor('black').strokeOpacity(1).lineWidth(1);
+    function addLineLocal(pdfReport, tab) {
+        utils.addTableLine(pdfReport, ROW_CURRENT, tab.INDEX, tab.LAST)
     }
 
     function NewLine(px) {
-        ROW_CURRENT += px;
         checkPositionOutsideArea()
+        ROW_CURRENT += px;
+
     }
 
-    function addColumnLine(tab) {
-        addTableLine(tab, ROW_CURRENT, tab, ROW_CURRENT + TEXT_SPACE);
+    function addColumnLine(pdfReport, tab) {
+        utils.addTableLine(pdfReport, ROW_CURRENT, tab, tab, ROW_CURRENT, (ROW_CURRENT + TEXT_SPACE))
     }
 
-    function addHilight(position, tab, row_height) {
-
-        pdfReport.rect(C.TAB.ITEM
-            .INDEX, position, (tab.LAST - tab.INDEX), row_height).fill('#f0f0f0');
-
-        pdfReport.fill('black');
+    function styles_font_left(tab_start, tab_end) {
+        return {
+            width: tab_end - tab_start,
+            align: 'left'
+        }
     }
 
-    function numberWithCommas(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    function numberWithCommas2(x) {
-        var parts = x.toString().split(".");
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return parts.join(".");
+    function styles_font_right(tab_start, tab_end) {
+        return {
+            width: tab_end - tab_start,
+            align: 'right'
+        }
     }
 
 }

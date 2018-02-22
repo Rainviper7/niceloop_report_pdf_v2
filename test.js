@@ -27,10 +27,10 @@ params_default = {
 // monthyemailPDF();
 
 // ------wait refactor------
-// memberPDF();
-dailyemailPDF();
+memberPDF();
 
 // --------finish-------
+// dailyemailPDF();
 // billsPDF(); //ทำเลื่อนบรรทัดออโต้ จัดความกว้างคอลัมน์ใหม่
 // voidPDF(); // ทำไฮไลตบรรทัด แก้การคัดคำ
 // salebyemployeePDF(); 
@@ -145,7 +145,8 @@ function detailbillsPDF() {
 function memberPDF() {
 
     //--------void--------
-    var memberReport = require('./libs/member_report/index')
+    var memberReport = require('./libs/member-pdf/index'),
+        mockdata = require('./libs/member-pdf/mock_data').data
         ;
 
     //-----------in dev mode
@@ -157,7 +158,7 @@ function memberPDF() {
 
         params_default.shopname = "Niceloop Test Lab"
         params_default.filePath = filename
-        // params_default.data = mockdata||{};
+        params_default.data = mockdata || {};
         params = _.assign({}, params_default)
 
     }
