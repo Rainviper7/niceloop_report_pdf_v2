@@ -22,14 +22,15 @@ params_default = {
 };
 
 //----main---
+// expense ควรใช้จากExcel
 // detailbillsPDF();
 // productbydaysPDF();
 // monthyemailPDF();
-
 // ------wait refactor------
-memberPDF();
+
 
 // --------finish-------
+// memberPDF();
 // dailyemailPDF();
 // billsPDF(); //ทำเลื่อนบรรทัดออโต้ จัดความกว้างคอลัมน์ใหม่
 // voidPDF(); // ทำไฮไลตบรรทัด แก้การคัดคำ

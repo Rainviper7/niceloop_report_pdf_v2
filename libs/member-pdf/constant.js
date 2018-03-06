@@ -16,16 +16,6 @@ var ROW = {
     HEIGHT: 13
 }
 
-var COLUMN = {
-    width: {
-        INDEX: 3,
-        NAME: 21,
-        COUNT: 6,
-        AMOUNT: 15
-    }
-
-}
-
 //----------table_layout
 var TAB = {
     ITEMS: {
